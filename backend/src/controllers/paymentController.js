@@ -36,6 +36,16 @@ const processPayment = async (req, res, next) => {
       throw new AppError("Forbidden. You do not have access to this payment", 403)
     }
 
+    // Cancellation check: cannot pay for cancelled delivery
+    if (payment.delivery && payment.delivery.status === DELIVERY_STATUS.CANCELLED) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: "Cannot process payment for a cancelled delivery"
+      })
+    }
+
+    // Double payment prevention
     if (payment.paymentStatus === PAYMENT_STATUS.SUCCESSFUL) {
       await transaction.rollback()
       return res.status(400).json({

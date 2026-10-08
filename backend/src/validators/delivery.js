@@ -77,10 +77,15 @@ const assignRiderSchema = z.object({
   riderId: z.number().int().positive("Valid riderId is required")
 }).strict()
 
+const releaseDeliverySchema = z.object({
+  reason: z.string().trim().min(3, "Release reason is required (e.g. vehicle breakdown)").max(500)
+}).strict()
+
 module.exports = {
   createDeliverySchema,
   updateDeliverySchema,
   cancelDeliverySchema,
   updateDeliveryStatusSchema,
-  assignRiderSchema
+  assignRiderSchema,
+  releaseDeliverySchema
 }

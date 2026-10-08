@@ -19,7 +19,8 @@ const {
   generateTrackingCode,
   generateTransactionReference,
   calculateDeliveryFee,
-  isValidTransition
+  isValidTransition,
+  maskPhoneNumber
 } = require("../utils/helpers")
 
 // 1. Create delivery request (Customer only)
@@ -67,7 +68,7 @@ const createDelivery = async (req, res, next) => {
       { transaction }
     )
 
-    const payment = await Payments.create(
+    await Payments.create(
       {
         deliveryId: delivery.id,
         userId: customerId,
@@ -238,7 +239,7 @@ const getDeliveryById = async (req, res, next) => {
   }
 }
 
-// 4. Track delivery by tracking code (Public / Authenticated)
+// 4. Track delivery by tracking code (Public / Authenticated - Sanitized for privacy)
 const trackDelivery = async (req, res, next) => {
   try {
     const { trackingCode } = req.params
@@ -275,9 +276,18 @@ const trackDelivery = async (req, res, next) => {
       throw new AppError("No delivery found with the provided tracking code", 404)
     }
 
+    // Sanitize PII for public view
+    const sanitized = delivery.toJSON()
+    if (sanitized.recipientPhone) {
+      sanitized.recipientPhone = maskPhoneNumber(sanitized.recipientPhone)
+    }
+    if (sanitized.pickupContactPhone) {
+      sanitized.pickupContactPhone = maskPhoneNumber(sanitized.pickupContactPhone)
+    }
+
     res.status(200).json({
       success: true,
-      delivery
+      delivery: sanitized
     })
   } catch (error) {
     next(error)
@@ -366,7 +376,10 @@ const confirmDelivery = async (req, res, next) => {
   const transaction = await sequelize.transaction()
   try {
     const { id } = req.params
-    const delivery = await Deliveries.findByPk(id, { transaction })
+    const delivery = await Deliveries.findByPk(id, {
+      include: [{ model: Payments, as: "payment" }],
+      transaction
+    })
 
     if (!delivery) {
       await transaction.rollback()
@@ -383,6 +396,19 @@ const confirmDelivery = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: `Cannot transition delivery from '${delivery.status}' to '${DELIVERY_STATUS.CONFIRMED}'`
+      })
+    }
+
+    // Payment pre-condition: Pre-paid orders (CARD/TRANSFER) MUST be paid before confirmation
+    if (
+      delivery.payment &&
+      [PAYMENT_METHODS.CARD, PAYMENT_METHODS.TRANSFER].includes(delivery.payment.paymentMethod) &&
+      delivery.payment.paymentStatus !== PAYMENT_STATUS.SUCCESSFUL
+    ) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: `Pre-paid delivery requires payment. Please complete payment before confirming dispatch.`
       })
     }
 
@@ -411,7 +437,7 @@ const confirmDelivery = async (req, res, next) => {
   }
 }
 
-// 7. Cancel delivery (Customer if PENDING/CONFIRMED; Admin anytime before terminal state)
+// 7. Cancel delivery (Customer if PENDING/CONFIRMED; Admin anytime before completion)
 const cancelDelivery = async (req, res, next) => {
   const transaction = await sequelize.transaction()
   try {
@@ -435,7 +461,24 @@ const cancelDelivery = async (req, res, next) => {
       throw new AppError("Forbidden. You cannot cancel this delivery", 403)
     }
 
-    // Role-based state check
+    // Completed delivery protection: DELIVERED deliveries are NEVER cancellable
+    if (delivery.status === DELIVERY_STATUS.DELIVERED) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: "Completed deliveries cannot be cancelled under any circumstance."
+      })
+    }
+
+    if (delivery.status === DELIVERY_STATUS.CANCELLED) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: "Delivery is already cancelled."
+      })
+    }
+
+    // Customer cancellation boundary: blocked once rider is assigned or in transit
     if (role === USER_ROLES.CUSTOMER) {
       const cancellableStatuses = [DELIVERY_STATUS.PENDING, DELIVERY_STATUS.CONFIRMED]
       if (!cancellableStatuses.includes(delivery.status)) {
@@ -447,15 +490,6 @@ const cancelDelivery = async (req, res, next) => {
       }
     }
 
-    // Terminal state check
-    if (delivery.status === DELIVERY_STATUS.DELIVERED || delivery.status === DELIVERY_STATUS.CANCELLED) {
-      await transaction.rollback()
-      return res.status(400).json({
-        success: false,
-        message: `Delivery is already in terminal state '${delivery.status}'`
-      })
-    }
-
     // If a rider was assigned, free the rider back to AVAILABLE
     if (delivery.riderId) {
       await Rider_profiles.update(
@@ -464,13 +498,21 @@ const cancelDelivery = async (req, res, next) => {
       )
     }
 
-    // If payment was already successful, mark payment as REFUNDED
+    // If payment was already successful, auto-refund
     if (delivery.payment && delivery.payment.paymentStatus === PAYMENT_STATUS.SUCCESSFUL) {
       await delivery.payment.update(
         {
           paymentStatus: PAYMENT_STATUS.REFUNDED,
           refundedAt: new Date(),
           notes: `Auto-refunded due to delivery cancellation. Reason: ${reason}`
+        },
+        { transaction }
+      )
+    } else if (delivery.payment && delivery.payment.paymentStatus === PAYMENT_STATUS.PENDING) {
+      await delivery.payment.update(
+        {
+          paymentStatus: PAYMENT_STATUS.FAILED,
+          notes: `Payment cancelled due to order cancellation. Reason: ${reason}`
         },
         { transaction }
       )
@@ -507,7 +549,7 @@ const cancelDelivery = async (req, res, next) => {
   }
 }
 
-// 8. Rider accepts delivery job
+// 8. Rider accepts delivery job (Concurrency-safe with row locking & pre-conditions)
 const acceptDelivery = async (req, res, next) => {
   const transaction = await sequelize.transaction()
   try {
@@ -533,8 +575,31 @@ const acceptDelivery = async (req, res, next) => {
       })
     }
 
-    // Fetch delivery with lock or check status
-    const delivery = await Deliveries.findByPk(id, { transaction })
+    // Single active delivery per courier invariant
+    const activeJobsCount = await Deliveries.count({
+      where: {
+        riderId: riderUserId,
+        status: {
+          [Op.in]: [DELIVERY_STATUS.ASSIGNED, DELIVERY_STATUS.PICKED_UP, DELIVERY_STATUS.IN_TRANSIT]
+        }
+      },
+      transaction
+    })
+
+    if (activeJobsCount > 0) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: "Riders can only handle one active delivery at a time. Please complete your current run first."
+      })
+    }
+
+    // Fetch delivery with ROW LOCK to prevent race conditions (no outer join on lock)
+    const delivery = await Deliveries.findByPk(id, {
+      transaction,
+      lock: transaction.LOCK.UPDATE
+    })
+
     if (!delivery) {
       await transaction.rollback()
       throw new AppError("Delivery not found", 404)
@@ -542,9 +607,24 @@ const acceptDelivery = async (req, res, next) => {
 
     if (delivery.status !== DELIVERY_STATUS.CONFIRMED || delivery.riderId !== null) {
       await transaction.rollback()
+      return res.status(409).json({
+        success: false,
+        message: `Delivery is no longer available for acceptance. Current status: '${delivery.status}', assigned: ${Boolean(delivery.riderId)}`
+      })
+    }
+
+    const payment = await Payments.findOne({ where: { deliveryId: delivery.id }, transaction })
+
+    // Pre-condition: Pre-paid orders (CARD/TRANSFER) must be paid before courier acceptance
+    if (
+      payment &&
+      [PAYMENT_METHODS.CARD, PAYMENT_METHODS.TRANSFER].includes(payment.paymentMethod) &&
+      payment.paymentStatus !== PAYMENT_STATUS.SUCCESSFUL
+    ) {
+      await transaction.rollback()
       return res.status(400).json({
         success: false,
-        message: `Delivery is not available for acceptance. Current status: '${delivery.status}', already assigned: ${Boolean(delivery.riderId)}`
+        message: "Cannot accept delivery. Pre-paid order has not been completed."
       })
     }
 
@@ -592,6 +672,76 @@ const acceptDelivery = async (req, res, next) => {
   }
 }
 
+// 8b. Rider releases assigned delivery job before pickup (Emergency / Breakdown)
+const releaseDelivery = async (req, res, next) => {
+  const transaction = await sequelize.transaction()
+  try {
+    const { id } = req.params
+    const { reason } = req.body
+    const riderUserId = req.user.id
+
+    const delivery = await Deliveries.findByPk(id, {
+      transaction,
+      lock: transaction.LOCK.UPDATE
+    })
+
+    if (!delivery) {
+      await transaction.rollback()
+      throw new AppError("Delivery not found", 404)
+    }
+
+    if (delivery.riderId !== riderUserId) {
+      await transaction.rollback()
+      throw new AppError("Forbidden. You are not the assigned rider for this delivery", 403)
+    }
+
+    // Rider can only release while ASSIGNED (before physical pickup)
+    if (delivery.status !== DELIVERY_STATUS.ASSIGNED) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: `Cannot release delivery once status is '${delivery.status}'. Packages physically in custody must be escalated to dispatch support.`
+      })
+    }
+
+    // Unassign delivery and return to CONFIRMED
+    await delivery.update(
+      {
+        riderId: null,
+        status: DELIVERY_STATUS.CONFIRMED
+      },
+      { transaction }
+    )
+
+    // Return rider to AVAILABLE
+    await Rider_profiles.update(
+      { availabilityStatus: RIDER_AVAILABILITY.AVAILABLE },
+      { where: { userId: riderUserId }, transaction }
+    )
+
+    await Delivery_status_logs.create(
+      {
+        deliveryId: delivery.id,
+        status: DELIVERY_STATUS.CONFIRMED,
+        changedBy: riderUserId,
+        notes: `Rider ${req.user.name} released job before pickup. Reason: ${reason}`
+      },
+      { transaction }
+    )
+
+    await transaction.commit()
+
+    res.status(200).json({
+      success: true,
+      message: "Delivery released successfully and returned to open job pool",
+      delivery
+    })
+  } catch (error) {
+    if (transaction) await transaction.rollback()
+    next(error)
+  }
+}
+
 // 9. Rider updates delivery progress: ASSIGNED -> PICKED_UP -> IN_TRANSIT -> DELIVERED
 const updateDeliveryStatus = async (req, res, next) => {
   const transaction = await sequelize.transaction()
@@ -601,13 +751,24 @@ const updateDeliveryStatus = async (req, res, next) => {
     const { role, id: userId } = req.user
 
     const delivery = await Deliveries.findByPk(id, {
-      include: [{ model: Payments, as: "payment" }],
-      transaction
+      transaction,
+      lock: transaction.LOCK.UPDATE
     })
 
     if (!delivery) {
       await transaction.rollback()
       throw new AppError("Delivery not found", 404)
+    }
+
+    const payment = await Payments.findOne({ where: { deliveryId: delivery.id }, transaction })
+
+    // Completed delivery protection: terminal state is immutable
+    if (delivery.status === DELIVERY_STATUS.DELIVERED || delivery.status === DELIVERY_STATUS.CANCELLED) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: `Delivery is in terminal state '${delivery.status}' and cannot be modified.`
+      })
     }
 
     // Permissions: Only assigned rider or Admin can update progress
@@ -616,12 +777,31 @@ const updateDeliveryStatus = async (req, res, next) => {
       throw new AppError("Forbidden. You are not the assigned rider for this delivery", 403)
     }
 
-    // State machine check
+    // State machine validity check
     if (!isValidTransition(delivery.status, targetStatus)) {
       await transaction.rollback()
       return res.status(400).json({
         success: false,
         message: `Invalid status transition from '${delivery.status}' to '${targetStatus}'`
+      })
+    }
+
+    // Physical progression invariants:
+    // DELIVERED requires IN_TRANSIT
+    if (targetStatus === DELIVERY_STATUS.DELIVERED && delivery.status !== DELIVERY_STATUS.IN_TRANSIT) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: `Cannot mark delivery as DELIVERED directly from '${delivery.status}'. Package must first be PICKED_UP and IN_TRANSIT.`
+      })
+    }
+
+    // IN_TRANSIT requires PICKED_UP
+    if (targetStatus === DELIVERY_STATUS.IN_TRANSIT && delivery.status !== DELIVERY_STATUS.PICKED_UP) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: `Cannot transition to IN_TRANSIT before package is PICKED_UP.`
       })
     }
 
@@ -648,17 +828,17 @@ const updateDeliveryStatus = async (req, res, next) => {
         )
       }
 
-      // If CASH on delivery, automatically mark payment as SUCCESSFUL
+      // COD Rule: If CASH on delivery, automatically mark payment as SUCCESSFUL upon delivery
       if (
-        delivery.payment &&
-        delivery.payment.paymentMethod === PAYMENT_METHODS.CASH &&
-        delivery.payment.paymentStatus === PAYMENT_STATUS.PENDING
+        payment &&
+        payment.paymentMethod === PAYMENT_METHODS.CASH &&
+        payment.paymentStatus === PAYMENT_STATUS.PENDING
       ) {
-        await delivery.payment.update(
+        await payment.update(
           {
             paymentStatus: PAYMENT_STATUS.SUCCESSFUL,
             paidAt: now,
-            notes: "Cash collected by rider upon delivery"
+            notes: "Cash collected by rider upon delivery dropoff"
           },
           { transaction }
         )
@@ -706,5 +886,7 @@ module.exports = {
   confirmDelivery,
   cancelDelivery,
   acceptDelivery,
+  releaseDelivery,
   updateDeliveryStatus
 }
+

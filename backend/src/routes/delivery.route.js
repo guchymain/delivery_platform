@@ -10,7 +10,8 @@ const {
   createDeliverySchema,
   updateDeliverySchema,
   cancelDeliverySchema,
-  updateDeliveryStatusSchema
+  updateDeliveryStatusSchema,
+  releaseDeliverySchema
 } = require("../validators/delivery")
 const { USER_ROLES } = require("../utils/constants")
 
@@ -49,7 +50,7 @@ router.post(
   deliveryController.confirmDelivery
 )
 
-// Cancel delivery request (Customer if PENDING/CONFIRMED, Admin anytime)
+// Cancel delivery request (Customer if PENDING/CONFIRMED, Admin anytime before completion)
 router.post(
   "/:id/cancel",
   authenticate,
@@ -65,6 +66,16 @@ router.post(
   authorize(USER_ROLES.RIDER),
   validate(idParamSchema, "params"),
   deliveryController.acceptDelivery
+)
+
+// Rider releases assigned job before pickup (emergency/unavailability)
+router.post(
+  "/:id/release",
+  authenticate,
+  authorize(USER_ROLES.RIDER),
+  validate(idParamSchema, "params"),
+  validate(releaseDeliverySchema),
+  deliveryController.releaseDelivery
 )
 
 // Rider or Admin updates delivery lifecycle status (PICKED_UP, IN_TRANSIT, DELIVERED)

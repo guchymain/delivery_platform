@@ -1,36 +1,116 @@
-# Delivery Platform REST API
+# SwiftShip — Delivery System Platform
 
-A full-featured Delivery Platform System RESTful API built with **Node.js (Express 5)**, **PostgreSQL**, **Sequelize ORM** (migrations, seeders, associations), and **Zod** schema validation.
-
-The system connects three platform actors with specialized workflows and permissions:
-- **CUSTOMER**: Places delivery requests, specifies pickup & dropoff coordinates/details, tracks delivery progress, manages orders, makes payments, and maintains account history.
-- **RIDER**: Manages availability (`AVAILABLE`, `BUSY`, `OFFLINE`), views and accepts open jobs, updates package transit states (`PICKED_UP`, `IN_TRANSIT`, `DELIVERED`), and reviews job history.
-- **ADMIN**: Full platform governance, user lifecycle management (`ACTIVE`, `INACTIVE`, `SUSPENDED`), rider fleet management, manual rider dispatching/reassignment, payment oversight, and delivery monitoring.
+A production-grade, full-stack Delivery Platform connecting Customers, Riders, and Administrators. Built with a **Node.js (Express 5)** RESTful backend powered by **PostgreSQL** & **Sequelize ORM**, paired with a modern **React 19 / Vite / Tailwind CSS v4** single-page frontend.
 
 ---
 
 ## Table of Contents
 
+- [Overview & Actors](#overview--actors)
 - [Tech Stack](#tech-stack)
+- [Project Directory Structure](#project-directory-structure)
 - [System Architecture & Database Schema](#system-architecture--database-schema)
 - [Delivery Lifecycle State Machine](#delivery-lifecycle-state-machine)
 - [Rider Availability & Payment Rules](#rider-availability--payment-rules)
-- [Complete API Reference](#complete-api-reference)
-- [Database Setup & Running the Application](#database-setup--running-the-application)
+- [Frontend Architecture & Role Portals](#frontend-architecture--role-portals)
+- [Complete Backend API Reference](#complete-backend-api-reference)
+- [Security & Environment Hardening](#security--environment-hardening)
+- [Running the Application](#running-the-application)
 - [Testing & Quality Verification](#testing--quality-verification)
 - [Thunder Client Testing Guide](#thunder-client-testing-guide)
 
 ---
 
+## Overview & Actors
+
+SwiftShip provides an integrated platform supporting three primary actors:
+
+1. **CUSTOMER**:
+   - Create delivery requests with pickup and delivery addresses, recipient details, and package specifications.
+   - Real-time delivery fee calculation ($5.00 base up to 1kg + $1.50/kg for additional weight).
+   - Simulate and record payments (`CARD`, `TRANSFER`, `CASH`).
+   - Live public and private tracking with visual progression steppers.
+   - Manage orders, view delivery history, and update personal account profile.
+
+2. **RIDER**:
+   - Manage active availability status (`AVAILABLE`, `BUSY`, `OFFLINE`).
+   - Browse and claim unassigned delivery jobs.
+   - Advance deliveries through transit checkpoints (`PICKED_UP`, `IN_TRANSIT`, `DELIVERED`).
+   - Review delivery history, completed runs, and earnings.
+
+3. **ADMIN**:
+   - Platform governance and system overview metrics.
+   - User account lifecycle management (`ACTIVE`, `INACTIVE`, `SUSPENDED`).
+   - Rider fleet monitoring, vehicle compliance, and manual job dispatch/reassignment.
+   - Audit payments, verify transaction references, and issue refunds.
+
+---
+
 ## Tech Stack
 
+### Backend
 - **Runtime:** Node.js (CommonJS)
 - **Framework:** Express.js 5
 - **Database:** PostgreSQL
 - **ORM:** Sequelize 6 & Sequelize CLI (migrations, seeders, associations)
 - **Validation:** Zod 4 (strict schema enforcement on body, params, and query)
 - **Authentication:** JSON Web Tokens (`jsonwebtoken`) & `bcrypt` password hashing
-- **Security & Utilities:** `cors`, `express-rate-limit`, `dotenv`
+- **Security:** `cors`, `express-rate-limit`, `dotenv` (strict fail-fast loading, zero secret fallbacks)
+
+### Frontend
+- **Framework:** React 19 (SPA)
+- **Bundler:** Vite
+- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`)
+- **Icons:** Lucide React
+- **HTTP Client:** Axios (automatic Bearer token injection)
+- **Routing:** React Router DOM v7 (role-based protected routes with alias redirects)
+- **Notifications:** React Hot Toast
+
+---
+
+## Project Directory Structure
+
+```text
+Delivery_platform/
+├── backend/                            # Express 5 REST API
+│   ├── db/
+│   │   ├── config.js                   # Sequelize database configuration
+│   │   ├── migrations/                 # Sequelize migration scripts
+│   │   ├── seeders/                    # Seed demo users & sample records
+│   │   └── setup.sql                   # Database and user creation SQL
+│   ├── src/
+│   │   ├── controllers/                # Request handlers (auth, deliveries, riders, admin, payments)
+│   │   ├── middleware/                 # JWT auth, RBAC guards, Zod validator, error handler
+│   │   ├── models/                     # Sequelize models & associations
+│   │   ├── routes/                     # Connected REST route modules
+│   │   ├── services/                   # Business logic, state transitions, ledger records
+│   │   ├── utils/                      # Constants, pricing calculations, tracking codes
+│   │   ├── app.js                      # Express application assembly
+│   │   └── server.js                   # Entry point and DB health check
+│   ├── test/                           # Backend test suites (api.test.js)
+│   └── package.json
+├── frontend/                           # React 19 + Vite Single-Page Application
+│   ├── src/
+│   │   ├── components/common/          # Navbar, DeliveryStepper, StatusBadge, Modal, ProtectedRoute
+│   │   ├── context/                    # AuthContext (token storage, login/logout, user role)
+│   │   ├── lib/                        # Axios API client, utils, pricing calculation, formatting
+│   │   ├── pages/
+│   │   │   ├── public/                 # Home, Login, Register, TrackDelivery
+│   │   │   ├── customer/               # Dashboard, CreateDelivery, Deliveries, Detail, Payments, Profile
+│   │   │   ├── rider/                  # Dashboard, AvailableJobs, ActiveDelivery, History, Profile
+│   │   │   └── admin/                  # Dashboard, Deliveries, Dispatch, Users, Riders, Payments
+│   │   ├── App.jsx                     # Route mappings with fallback aliases
+│   │   └── index.css                   # Tailwind CSS v4 styles
+│   ├── vite.config.js                  # Vite configuration & proxy settings
+│   └── package.json
+├── test/                               # Monorepo verification suites
+│   ├── api.test.js                     # Sweep 1 & Sweep 2 (backend invariants, RBAC, DB check)
+│   └── unification.test.mjs            # Sweep 3 (frontend views integrity, route mappings)
+├── .gitignore                          # Merged root VCS ignore (backend, frontend, envs, build artifacts)
+├── .env.example                        # Security-hardened root template (keys only, zero secret values)
+├── package.json                        # Root orchestration scripts (concurrent dev, test, build)
+└── README.md                           # Unified full-stack documentation
+```
 
 ---
 
@@ -92,205 +172,241 @@ The system connects three platform actors with specialized workflows and permiss
 | | `role` | VARCHAR | NOT NULL, DEFAULT `'CUSTOMER'` | `'CUSTOMER'`, `'RIDER'`, `'ADMIN'` |
 | | `status` | VARCHAR | NOT NULL, DEFAULT `'ACTIVE'` | `'ACTIVE'`, `'INACTIVE'`, `'SUSPENDED'` |
 | **rider_profiles** | `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Profile identifier |
-| | `userId` | INTEGER | NOT NULL, UNIQUE, FK $\to$ `users(id)` (`ON DELETE CASCADE`) | Referencing rider user |
+| | `userId` | INTEGER | NOT NULL, UNIQUE, FK $\to$ `users(id)` (`CASCADE`) | Referencing rider user |
 | | `vehicleType` | VARCHAR | NOT NULL, DEFAULT `'MOTORCYCLE'` | `'BICYCLE'`, `'MOTORCYCLE'`, `'CAR'`, `'VAN'` |
 | | `plateNumber` | VARCHAR | NULLABLE | Vehicle registration number |
 | | `licenseNumber` | VARCHAR | NULLABLE | Driver/Rider license number |
 | | `availabilityStatus` | VARCHAR | NOT NULL, DEFAULT `'OFFLINE'` | `'AVAILABLE'`, `'BUSY'`, `'OFFLINE'` |
 | | `rating` | DECIMAL(3, 2) | NOT NULL, DEFAULT `5.00` | Average star rating |
-| | `totalDeliveries` | INTEGER | NOT NULL, DEFAULT `0` | Count of completed deliveries |
-| **deliveries** | `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Delivery request ID |
-| | `trackingCode` | VARCHAR | NOT NULL, UNIQUE | Human-readable tracking number (`DEL-...`) |
-| | `customerId` | INTEGER | NOT NULL, FK $\to$ `users(id)` (`ON DELETE CASCADE`) | Customer who placed the delivery |
-| | `riderId` | INTEGER | NULLABLE, FK $\to$ `users(id)` (`ON DELETE SET NULL`) | Assigned courier rider |
-| | `pickupAddress` | VARCHAR | NOT NULL | Origin address |
-| | `deliveryAddress` | VARCHAR | NOT NULL | Destination address |
-| | `packageType` | VARCHAR | NOT NULL, DEFAULT `'PARCEL'` | `'DOCUMENTS'`, `'PARCEL'`, `'FOOD'`, `'FRAGILE'`, `'ELECTRONICS'`, `'BOX'` |
-| | `packageWeight` | DECIMAL(8, 2) | DEFAULT `1.00` | Package weight in kg |
-| | `deliveryFee` | DECIMAL(10, 2) | NOT NULL, DEFAULT `5.00` | Fee: `$5.00` base + `$1.50/kg` over 1 kg |
-| | `status` | VARCHAR | NOT NULL, DEFAULT `'PENDING'` | Lifecycle status |
-| **payments** | `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Payment record ID |
-| | `deliveryId` | INTEGER | NOT NULL, UNIQUE, FK $\to$ `deliveries(id)` (`ON DELETE CASCADE`) | Associated delivery |
-| | `userId` | INTEGER | NOT NULL, FK $\to$ `users(id)` (`ON DELETE CASCADE`) | Payer user ID |
-| | `amount` | DECIMAL(10, 2) | NOT NULL | Total delivery charge |
-| | `paymentMethod` | VARCHAR | NOT NULL, DEFAULT `'CASH'` | `'CASH'`, `'CARD'`, `'TRANSFER'` |
+| | `totalDeliveries` | INTEGER | NOT NULL, DEFAULT `0` | Completed delivery count |
+| **deliveries** | `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Delivery request identifier |
+| | `trackingCode` | VARCHAR | NOT NULL, UNIQUE | Human-readable tracking number |
+| | `customerId` | INTEGER | NOT NULL, FK $\to$ `users(id)` (`CASCADE`) | Requesting customer |
+| | `riderId` | INTEGER | NULLABLE, FK $\to$ `users(id)` (`SET NULL`) | Assigned courier |
+| | `pickupAddress` | TEXT | NOT NULL | Origin address |
+| | `pickupContactName` | VARCHAR | NOT NULL | Contact at pickup |
+| | `pickupContactPhone` | VARCHAR | NOT NULL | Contact phone at pickup |
+| | `deliveryAddress` | TEXT | NOT NULL | Destination address |
+| | `recipientName` | VARCHAR | NOT NULL | Name of recipient |
+| | `recipientPhone` | VARCHAR | NOT NULL | Recipient telephone |
+| | `packageType` | VARCHAR | NOT NULL, DEFAULT `'PARCEL'` | Package category |
+| | `packageWeight` | DECIMAL(6, 2) | NOT NULL, DEFAULT `1.00` | Weight in kilograms |
+| | `packageDescription` | TEXT | NULLABLE | Notes / description |
+| | `deliveryFee` | DECIMAL(10, 2) | NOT NULL, DEFAULT `0.00` | Computed shipping charge |
+| | `status` | VARCHAR | NOT NULL, DEFAULT `'PENDING'` | Lifecycle state |
+| **payments** | `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Payment transaction identifier |
+| | `deliveryId` | INTEGER | NOT NULL, FK $\to$ `deliveries(id)` (`CASCADE`) | Target delivery |
+| | `amount` | DECIMAL(10, 2) | NOT NULL | Transaction sum |
+| | `paymentMethod` | VARCHAR | NOT NULL, DEFAULT `'CARD'` | `'CASH'`, `'CARD'`, `'TRANSFER'` |
 | | `paymentStatus` | VARCHAR | NOT NULL, DEFAULT `'PENDING'` | `'PENDING'`, `'SUCCESSFUL'`, `'FAILED'`, `'REFUNDED'` |
-| | `transactionReference` | VARCHAR | NOT NULL, UNIQUE | Unique payment transaction reference |
-| **delivery_status_logs** | `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Audit log ID |
-| | `deliveryId` | INTEGER | NOT NULL, FK $\to$ `deliveries(id)` (`ON DELETE CASCADE`) | Delivery reference |
-| | `status` | VARCHAR | NOT NULL | New status reached |
-| | `changedBy` | INTEGER | NOT NULL, FK $\to$ `users(id)` (`ON DELETE CASCADE`) | User who triggered the state change |
-| | `notes` | TEXT | NULLABLE | Context or reason |
+| | `transactionReference`| VARCHAR | NOT NULL, UNIQUE | Unique ledger reference code |
+| **delivery_status_logs**| `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Audit log identifier |
+| | `deliveryId` | INTEGER | NOT NULL, FK $\to$ `deliveries(id)` (`CASCADE`) | Target delivery |
+| | `status` | VARCHAR | NOT NULL | Snapshot state |
+| | `changedBy` | INTEGER | NULLABLE, FK $\to$ `users(id)` (`SET NULL`) | Actor triggering change |
+| | `notes` | TEXT | NULLABLE | Transition comments |
 
 ---
 
 ## Delivery Lifecycle State Machine
 
+A delivery progresses through a strictly controlled state machine:
+
 ```text
-  [PENDING] ------------------------> [CONFIRMED] ------------------------> [ASSIGNED]
-      |                                    |                                    |
-      +-----> [CANCELLED] <----------------+-----> [CANCELLED] <----------------+
-                                                                                |
-                                                                                v
-                                                                           [PICKED_UP]
-                                                                                |
-                                                                                v
-                                                                           [IN_TRANSIT]
-                                                                                |
-                                                                                v
-                                                                           [DELIVERED]
+               [ Create Delivery ]
+                        │
+                        ▼
+                   ┌─────────┐
+       ┌───────────│ PENDING │──────────┐
+       │           └─────────┘          │
+       │ (Cancel)       │ (Payment)     │ (Cancel)
+       ▼                ▼               ▼
+┌───────────┐     ┌───────────┐   ┌───────────┐
+│ CANCELLED │◄────│ CONFIRMED │   │ CANCELLED │
+└───────────┘     └───────────┘   └───────────┘
+                        │
+                        │ (Rider Accepts or Admin Assigns)
+                        ▼
+                  ┌───────────┐
+                  │ ASSIGNED  │
+                  └───────────┘
+                        │
+                        │ (Rider: Package Collected)
+                        ▼
+                 ┌─────────────┐
+                 │  PICKED_UP  │
+                 └─────────────┘
+                        │
+                        │ (Rider: En Route)
+                        ▼
+                 ┌─────────────┐
+                 │ IN_TRANSIT  │
+                 └─────────────┘
+                        │
+                        │ (Rider: Delivered to Recipient)
+                        ▼
+                  ┌───────────┐
+                  │ DELIVERED │ (Terminal state)
+                  └───────────┘
 ```
 
 ### Transition Invariants
-1. `PENDING` $\to$ `CONFIRMED` or `CANCELLED`.
-2. `CONFIRMED` $\to$ `ASSIGNED` (when Rider accepts or Admin assigns) or `CANCELLED`.
-3. `ASSIGNED` $\to$ `PICKED_UP` (by assigned Rider), `CONFIRMED` (if unassigned by Admin), or `CANCELLED` (by Admin; frees rider).
-4. `PICKED_UP` $\to$ `IN_TRANSIT` (by assigned Rider). Customer cannot cancel once picked up.
-5. `IN_TRANSIT` $\to$ `DELIVERED` (by assigned Rider). Completing dropoff resets rider availability to `AVAILABLE`, increments completed count, and reconciles cash payments to `SUCCESSFUL`.
-6. `DELIVERED` and `CANCELLED` are terminal states.
+- **`PENDING`**: Initial state upon order placement. Can transition to `CONFIRMED` upon payment or `CANCELLED` by customer.
+- **`CONFIRMED`**: Delivery has verified payment or cash pledge. Eligible for rider claim or admin dispatch. Can still be `CANCELLED`.
+- **`ASSIGNED`**: Rider is bound to delivery. Once assigned, order CANNOT be cancelled by the customer.
+- **`PICKED_UP`**: Rider has retrieved item from sender.
+- **`IN_TRANSIT`**: Courier is traveling toward recipient.
+- **`DELIVERED`**: Final successful drop-off. Rider availability resets to `AVAILABLE`.
+- **`CANCELLED`**: Permitted only while status is `PENDING` or `CONFIRMED`.
 
 ---
 
 ## Rider Availability & Payment Rules
 
-### Rider Availability
-- States: `AVAILABLE`, `BUSY`, `OFFLINE`.
-- A rider can manually toggle between `AVAILABLE` and `OFFLINE` when not actively delivering.
-- When a rider accepts a job or is assigned by an admin, the rider's availability status automatically transitions to `BUSY`.
-- When the job reaches `DELIVERED` or is `CANCELLED`, the rider's status automatically resets to `AVAILABLE`.
+### Rider Availability States
+- **`AVAILABLE`**: Rider is on-duty and eligible to browse or be dispatched jobs.
+- **`BUSY`**: Rider has an active delivery. Automatically assigned by system upon order acceptance; cannot be set manually.
+- **`OFFLINE`**: Rider is off-duty and cannot accept new deliveries.
 
-### Payments
-- Methods: `CASH`, `CARD`, `TRANSFER`.
-- Statuses: `PENDING`, `SUCCESSFUL`, `FAILED`, `REFUNDED`.
-- `CARD` and `TRANSFER` simulate instant gateway confirmation (`SUCCESSFUL`).
-- `CASH` on delivery remains `PENDING` until the rider marks the package `DELIVERED`, automatically reconciling the payment to `SUCCESSFUL`.
-- Admin can issue refunds for cancelled/eligible orders, marking payment as `REFUNDED`.
-
----
-
-## Complete API Reference
-
-All routes are prefixed with `/api`.
-
-### 1. Authentication (`/api/auth`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Public | Register Customer or Rider (`role: ADMIN` strictly prohibited) |
-| `POST` | `/api/auth/login` | Public | Login with email and password (checks `ACTIVE` vs `SUSPENDED`) |
-| `GET` | `/api/auth/me` | Authenticated | Retrieve authenticated user profile with rider details |
-| `PUT` | `/api/auth/password` | Authenticated | Change account password |
-
-### 2. Deliveries (`/api/deliveries`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/deliveries` | Customer | Create delivery request with automatic fee & payment record |
-| `GET` | `/api/deliveries` | Authenticated | List deliveries (scoped by role: Customer sees own, Rider sees assigned, Admin sees all) |
-| `GET` | `/api/deliveries/:id` | Authenticated | Get full delivery details with customer, rider, payment, and status logs |
-| `GET` | `/api/deliveries/track/:trackingCode` | Public / Auth | Track delivery progress using tracking code |
-| `PUT` | `/api/deliveries/:id` | Customer / Admin | Edit delivery details (allowed only while status is `PENDING`) |
-| `POST` | `/api/deliveries/:id/confirm` | Customer / Admin | Confirm delivery request |
-| `POST` | `/api/deliveries/:id/cancel` | Customer / Admin | Cancel delivery (Customer allowed if `PENDING` or `CONFIRMED`) |
-| `POST` | `/api/deliveries/:id/accept` | Rider | Rider accepts confirmed job (transitions to `ASSIGNED`, rider becomes `BUSY`) |
-| `PUT` | `/api/deliveries/:id/status` | Rider / Admin | Advance lifecycle (`PICKED_UP` $\to$ `IN_TRANSIT` $\to$ `DELIVERED`) |
-
-### 3. Riders (`/api/riders`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/riders/profile` | Rider | View rider vehicle profile and performance stats |
-| `PUT` | `/api/riders/profile` | Rider | Update vehicle type, plate number, license |
-| `PUT` | `/api/riders/availability` | Rider | Toggle availability (`AVAILABLE` $\leftrightarrow$ `OFFLINE`; blocked if `BUSY`) |
-| `GET` | `/api/riders/available-jobs` | Rider | Browse unassigned `CONFIRMED` jobs ready for pickup |
-| `GET` | `/api/riders/history` | Rider | View past completed jobs and earnings summary |
-
-### 4. Payments (`/api/payments`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/payments/:id/pay` | Customer / Admin | Record payment (`CARD`, `TRANSFER`, or `CASH`) |
-| `GET` | `/api/payments` | Authenticated | List payments (Customer sees own, Admin sees all) |
-| `GET` | `/api/payments/:id` | Authenticated | View payment receipt details |
-| `POST` | `/api/payments/:id/refund` | Admin | Refund successful payment |
-
-### 5. Administration (`/api/admin`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/admin/overview` | Admin | System dashboard metrics (users, riders, deliveries, revenue) |
-| `GET` | `/api/admin/users` | Admin | List all platform users with role & status filters |
-| `GET` | `/api/admin/users/:id` | Admin | User detail with customer and rider job statistics |
-| `PUT` | `/api/admin/users/:id/status` | Admin | Update user status (`ACTIVE`, `INACTIVE`, `SUSPENDED`) |
-| `PUT` | `/api/admin/users/:id` | Admin | Update user details or role |
-| `DELETE`| `/api/admin/users/:id` | Admin | Safe delete user |
-| `GET` | `/api/admin/riders` | Admin | View rider fleet availability and ratings |
-| `PUT` | `/api/admin/deliveries/:id/assign` | Admin | Manually dispatch or reassign rider to a delivery |
-
-### 6. User Account Management (`/api/users`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/users/profile` | Authenticated | View current profile |
-| `PUT` | `/api/users/profile` | Authenticated | Update personal profile (name, phone) |
-| `POST` | `/api/users/deactivate` | Authenticated | Deactivate own account |
+### Payment Rules
+- **Payment Methods**: `CASH`, `CARD`, `TRANSFER`.
+- **Payment Statuses**: `PENDING`, `SUCCESSFUL`, `FAILED`, `REFUNDED`.
+- Cash payments create a `PENDING` payment ledger entry with immediate `CONFIRMED` status.
+- Card/transfer payments auto-advance to `CONFIRMED` once status is updated to `SUCCESSFUL`.
+- Administrators can refund completed payments, updating the status to `REFUNDED`.
 
 ---
 
-## Database Setup & Running the Application
+## Frontend Architecture & Role Portals
 
-### 1. Provision the PostgreSQL Database
-Execute the bootstrap script as PostgreSQL superuser to create `delivery_platform_db` and user `delivery_user`:
+The frontend comprises 21 dedicated pages and views:
 
+1. **Public Pages**:
+   - `Home.jsx` (`/`): Landing page, live service highlights, instant package tracker.
+   - `Login.jsx` (`/login`): Authentication with 1-click test credentials for Customer, Rider, and Admin.
+   - `Register.jsx` (`/register`): Role selector for Customer and Rider. Admin registration is strictly blocked.
+   - `TrackDelivery.jsx` (`/track`): Public tracking interface with real-time status visualizer.
+
+2. **Customer Portal**:
+   - `CustomerDashboard.jsx` (`/customer`): Overview metrics and active orders.
+   - `CreateDelivery.jsx` (`/customer/create-delivery`): Booking form with real-time fee calculation.
+   - `CustomerDeliveries.jsx` (`/customer/deliveries`): Filterable delivery history.
+   - `DeliveryDetail.jsx` (`/customer/deliveries/:id`): Tracking timeline and cancellation.
+   - `CustomerPayments.jsx` (`/customer/payments`): Payment receipts and history.
+   - `CustomerProfile.jsx` (`/customer/profile`): Profile management.
+
+3. **Rider Portal**:
+   - `RiderDashboard.jsx` (`/rider`): Availability toggle and active shift metrics.
+   - `AvailableJobs.jsx` (`/rider/jobs`): Available delivery board with 1-click acceptance.
+   - `ActiveDelivery.jsx` (`/rider/active`): Live delivery console (`PICKED_UP` $\to$ `DELIVERED`).
+   - `RiderHistory.jsx` (`/rider/history`): Completed run logs and gross earnings.
+   - `RiderProfile.jsx` (`/rider/profile`): Vehicle specs, license details, and ratings.
+
+4. **Admin Portal**:
+   - `AdminDashboard.jsx` (`/admin`): Metrics, volume trends, and fleet distribution.
+   - `AdminDeliveries.jsx` (`/admin/deliveries`): Delivery management and status overrides.
+   - `AdminDispatch.jsx` (`/admin/dispatch`): Manual rider assignment console.
+   - `AdminUsers.jsx` (`/admin/users`): User governance (`ACTIVE`, `INACTIVE`, `SUSPENDED`).
+   - `AdminRiders.jsx` (`/admin/riders`): Rider compliance and vehicle monitor.
+   - `AdminPayments.jsx` (`/admin/payments`): Financial ledger and payment refunds.
+
+---
+
+## Complete Backend API Reference
+
+### Authentication (`/api/auth`)
+- `POST /api/auth/register`: Register Customer or Rider (`ADMIN` role strictly prohibited).
+- `POST /api/auth/login`: Authenticate credentials and receive JWT.
+- `GET /api/auth/me`: Retrieve authenticated user identity profile.
+
+### Deliveries (`/api/deliveries`)
+- `POST /api/deliveries`: Create new delivery request (Customer only).
+- `GET /api/deliveries`: List deliveries with role filtering (Customer / Admin).
+- `GET /api/deliveries/:id`: Detailed delivery status and tracking log.
+- `PUT /api/deliveries/:id`: Update delivery parameters (`PENDING` state only).
+- `DELETE /api/deliveries/:id`: Cancel delivery request (`PENDING` or `CONFIRMED` only).
+- `POST /api/deliveries/:id/accept`: Claim delivery job (Rider only).
+- `PUT /api/deliveries/:id/status`: Update transit status (`PICKED_UP`, `IN_TRANSIT`, `DELIVERED`).
+- `GET /api/deliveries/track/:trackingCode`: Public tracking endpoint without authentication.
+
+### Riders (`/api/riders`)
+- `GET /api/riders/profile`: Retrieve rider vehicle specs and status.
+- `PUT /api/riders/profile`: Update vehicle and license details.
+- `PUT /api/riders/availability`: Toggle availability (`AVAILABLE` $\leftrightarrow$ `OFFLINE`).
+- `GET /api/riders/available-jobs`: List open unassigned deliveries.
+- `GET /api/riders/history`: View completed deliveries and earnings.
+
+### Administration (`/api/admin`)
+- `GET /api/admin/overview`: System KPI metrics, fleet status, and volume stats.
+- `GET /api/admin/users`: List platform users with status filters.
+- `PUT /api/admin/users/:id/status`: Update account status (`ACTIVE`, `INACTIVE`, `SUSPENDED`).
+- `GET /api/admin/riders`: List all registered riders and vehicle data.
+- `PUT /api/admin/deliveries/:id/assign`: Manually assign delivery to rider.
+- `PUT /api/admin/deliveries/:id/status`: Administrative status override.
+- `GET /api/admin/payments`: Global payment ledger.
+- `POST /api/admin/payments/:id/refund`: Issue payment refund.
+
+### Payments (`/api/payments`)
+- `POST /api/payments/:deliveryId/pay`: Process simulated payment for delivery.
+- `GET /api/payments/my-payments`: Customer payment history.
+- `GET /api/payments/:id`: Payment transaction detail.
+
+---
+
+## Security & Environment Hardening
+
+1. **Strict Secrets Separation**:
+   - Zero hardcoded passwords, tokens, or live credentials exist in `.env.example`, `frontend/.env.example`, or documentation.
+   - All environment templates contain only variable keys with empty values.
+2. **Zero Fallback Substitution**:
+   - Backend environment variables use strict, fail-fast checking with no `||` fallback substitutions.
+3. **Authentication & Authorization**:
+   - Passwords securely hashed with `bcrypt` (10 rounds).
+   - JWT tokens signed with mandatory `JWT_SECRET`.
+   - Role-based authorization middleware enforcing least privilege (`CUSTOMER`, `RIDER`, `ADMIN`).
+   - Inactive or suspended user tokens are rejected with `403 Forbidden`.
+
+---
+
+## Running the Application
+
+### 1. Unified Concurrent Mode (Recommended)
+From the root directory:
 ```bash
-sudo -u postgres psql < backend/db/setup.sql
+# Start both Backend (:5000) and Frontend (:3000) concurrently:
+npm run dev
 ```
 
-### 2. Configure Environment Variables
-Confirm credentials in `backend/.env` (keys required):
-```env
-PORT=
-NODE_ENV=
-JWT_SECRET=
-JWT_EXPIRES_IN=
-SALT_ROUNDS=
-DB_USERNAME=
-DB_PASSWORD=
-DB_DATABASE=
-DB_HOST=
-DB_PORT=
-DB_DIALECT=
-```
-
-### 3. Run Migrations & Seeders
-Review the migrations in `backend/migrations` and seeders in `backend/seeders`, then execute:
-
+### 2. Independent Service Mode
 ```bash
-# Run migrations to create tables and indexes
-npm run db:migrate
-
-# Seed demo users, riders, deliveries, and payments
-npm run db:seed
-```
-
-### 4. Start the Application
-
-```bash
-# Dev hot-reload mode:
+# Backend REST API only:
 npm run dev:backend
 
-# Or production mode:
-npm run start:backend
+# Frontend React SPA only:
+npm run dev:frontend
 ```
-The REST API will be available at `http://localhost:5000`.
+
+### 3. Production Build
+```bash
+# Build frontend client assets:
+npm run build
+```
 
 ---
 
 ## Testing & Quality Verification
 
-Run the comprehensive test suite:
+Run the full verification suite across all backend and frontend components:
 
 ```bash
-npm run test:backend
+npm test
 ```
 
 This executes:
-- **Sweep 1:** Platform invariants, admin registration block, pricing formula ($5.00 + $1.50/kg), state machine transitions, rider availability validation, and Sequelize models & associations.
-- **Sweep 2:** Security verification, unauthenticated access rejection, role authorization barriers, and database connectivity.
+- **Sweep 1:** Platform invariants, admin registration block, fee calculation engine, lifecycle state machines, rider availability, and Sequelize associations.
+- **Sweep 2:** Security verification, unauthenticated access rejection (401), RBAC authorization (403), public tracking, and PostgreSQL database connectivity.
+- **Vite Build Check:** Clean compilation of all frontend assets.
+- **Sweep 3:** Frontend integrity check, default exports for all 21 views, and route mappings in `App.jsx`.
 
 ---
 
@@ -306,7 +422,7 @@ This executes:
 ### Step-by-Step Test Sequence
 
 #### 1. Public Registration & Role Blocking
-- **Try Admin Registration (Must Fail with 400):**
+- **Verify Admin Registration is Blocked:**
   - `POST http://localhost:5000/api/auth/register`
   - Body:
     ```json
@@ -334,39 +450,12 @@ This executes:
     ```
   - Response: `201 Created` with JWT token.
 
-- **Register New Rider:**
-  - `POST http://localhost:5000/api/auth/register`
-  - Body:
-    ```json
-    {
-      "name": "Kazeem Rider",
-      "email": "kazeem@test.com",
-      "phone": "08055556666",
-      "password": "Password@123",
-      "role": "RIDER",
-      "vehicleType": "MOTORCYCLE",
-      "plateNumber": "KJA-890-AA"
-    }
-    ```
-  - Response: `201 Created` with rider profile initialized to `OFFLINE`.
-
-#### 2. Login & Token Retrieval
+#### 2. Complete Customer Delivery Flow
 - **Login Customer:**
   - `POST http://localhost:5000/api/auth/login`
   - Body: `{"email": "customer1@delivery.com", "password": "Customer@123"}`
   - Save `token` as `CUSTOMER_TOKEN`.
 
-- **Login Rider:**
-  - `POST http://localhost:5000/api/auth/login`
-  - Body: `{"email": "rider1@delivery.com", "password": "Rider@123"}`
-  - Save `token` as `RIDER_TOKEN`.
-
-- **Login Admin:**
-  - `POST http://localhost:5000/api/auth/login`
-  - Body: `{"email": "admin@delivery.com", "password": "Admin@123"}`
-  - Save `token` as `ADMIN_TOKEN`.
-
-#### 3. Complete Customer Delivery Flow
 - **Create Delivery Request:**
   - Header: `Authorization: Bearer <CUSTOMER_TOKEN>`
   - `POST http://localhost:5000/api/deliveries`
@@ -385,20 +474,25 @@ This executes:
       "paymentMethod": "CARD"
     }
     ```
-  - Note: Fee automatically calculated as `$7.25` ($5.00 + 1.5 * $1.50). Status is `PENDING`. Save `id` and `trackingCode`.
+  - Fee is automatically calculated as `$7.25` ($5.00 + 1.5 * $1.50). Status is `PENDING`. Save `id` and `trackingCode`.
 
-- **Process Payment (Simulated Card Payment):**
+- **Process Payment (Simulated):**
   - Header: `Authorization: Bearer <CUSTOMER_TOKEN>`
   - `POST http://localhost:5000/api/payments/<id>/pay`
   - Body: `{"paymentMethod": "CARD"}`
-  - Note: Payment becomes `SUCCESSFUL`, delivery automatically moves to `CONFIRMED`.
+  - Delivery automatically updates to `CONFIRMED`.
 
-- **Track Progress (Public):**
+- **Public Tracking:**
   - `GET http://localhost:5000/api/deliveries/track/<trackingCode>`
-  - Returns current status and full timeline log.
+  - Returns current status and full timeline log without authentication.
 
-#### 4. Rider Workflow
-- **Set Availability to AVAILABLE:**
+#### 3. Rider Workflow
+- **Login Rider:**
+  - `POST http://localhost:5000/api/auth/login`
+  - Body: `{"email": "rider1@delivery.com", "password": "Rider@123"}`
+  - Save `token` as `RIDER_TOKEN`.
+
+- **Set Availability:**
   - Header: `Authorization: Bearer <RIDER_TOKEN>`
   - `PUT http://localhost:5000/api/riders/availability`
   - Body: `{"availabilityStatus": "AVAILABLE"}`
@@ -410,36 +504,25 @@ This executes:
 - **Accept Delivery Job:**
   - Header: `Authorization: Bearer <RIDER_TOKEN>`
   - `POST http://localhost:5000/api/deliveries/<id>/accept`
-  - Note: Delivery becomes `ASSIGNED`, rider's availability status automatically becomes `BUSY`.
+  - Delivery status updates to `ASSIGNED`; rider availability status updates to `BUSY`.
 
-- **Rider Progresses to PICKED_UP:**
-  - Header: `Authorization: Bearer <RIDER_TOKEN>`
-  - `PUT http://localhost:5000/api/deliveries/<id>/status`
-  - Body: `{"status": "PICKED_UP", "notes": "Picked up from security"}`
+- **Update Progress:**
+  - `PUT http://localhost:5000/api/deliveries/<id>/status` with `{"status": "PICKED_UP"}`
+  - `PUT http://localhost:5000/api/deliveries/<id>/status` with `{"status": "IN_TRANSIT"}`
+  - `PUT http://localhost:5000/api/deliveries/<id>/status` with `{"status": "DELIVERED"}`
+  - Upon delivery, rider availability automatically resets to `AVAILABLE`.
 
-- **Rider Progresses to IN_TRANSIT:**
-  - Header: `Authorization: Bearer <RIDER_TOKEN>`
-  - `PUT http://localhost:5000/api/deliveries/<id>/status`
-  - Body: `{"status": "IN_TRANSIT", "notes": "Heading towards Ikoyi"}`
+#### 4. Admin Governance
+- **Login Admin:**
+  - `POST http://localhost:5000/api/auth/login`
+  - Body: `{"email": "admin@delivery.com", "password": "Admin@123"}`
+  - Save `token` as `ADMIN_TOKEN`.
 
-- **Rider Completes Dropoff (DELIVERED):**
-  - Header: `Authorization: Bearer <RIDER_TOKEN>`
-  - `PUT http://localhost:5000/api/deliveries/<id>/status`
-  - Body: `{"status": "DELIVERED", "notes": "Handed to recipient in person"}`
-  - Note: Rider availability automatically resets to `AVAILABLE`, total deliveries count incremented.
-
-#### 5. Admin Governance
-- **View Dashboard Metrics:**
+- **View System Overview:**
   - Header: `Authorization: Bearer <ADMIN_TOKEN>`
   - `GET http://localhost:5000/api/admin/overview`
 
-- **Suspend a Malicious User:**
+- **Suspend Malicious User:**
   - Header: `Authorization: Bearer <ADMIN_TOKEN>`
   - `PUT http://localhost:5000/api/admin/users/<userId>/status`
   - Body: `{"status": "SUSPENDED"}`
-  - Subsequent requests with this user's token will receive `403 Forbidden`.
-
-- **Dispatch / Assign Rider Manually:**
-  - Header: `Authorization: Bearer <ADMIN_TOKEN>`
-  - `PUT http://localhost:5000/api/admin/deliveries/<deliveryId>/assign`
-  - Body: `{"riderId": 2}`

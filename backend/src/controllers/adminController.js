@@ -13,7 +13,8 @@ const {
   ACCOUNT_STATUS,
   RIDER_AVAILABILITY,
   DELIVERY_STATUS,
-  PAYMENT_STATUS
+  PAYMENT_STATUS,
+  PAYMENT_METHODS
 } = require("../utils/constants")
 
 // 1. Platform overview & dashboard metrics
@@ -158,24 +159,60 @@ const getUserById = async (req, res, next) => {
 
 // 4. Update user account status (ACTIVE, INACTIVE, SUSPENDED)
 const updateUserStatus = async (req, res, next) => {
+  const transaction = await sequelize.transaction()
   try {
     const { id } = req.params
     const { status } = req.body
 
-    const user = await Users.findByPk(id)
+    const user = await Users.findByPk(id, { transaction })
     if (!user) {
+      await transaction.rollback()
       throw new AppError("User not found", 404)
     }
 
     // Prevent admin from suspending themselves
     if (user.id === req.user.id) {
+      await transaction.rollback()
       return res.status(400).json({
         success: false,
         message: "You cannot change the status of your own administrator account"
       })
     }
 
-    await user.update({ status })
+    await user.update({ status }, { transaction })
+
+    // If user is a rider and account is suspended or deactivated:
+    if (user.role === USER_ROLES.RIDER && [ACCOUNT_STATUS.SUSPENDED, ACCOUNT_STATUS.INACTIVE].includes(status)) {
+      // 1. Force rider availability to OFFLINE
+      await Rider_profiles.update(
+        { availabilityStatus: RIDER_AVAILABILITY.OFFLINE },
+        { where: { userId: user.id }, transaction }
+      )
+
+      // 2. Unassign any assigned orders that haven't been picked up yet
+      const assignedDeliveries = await Deliveries.findAll({
+        where: {
+          riderId: user.id,
+          status: DELIVERY_STATUS.ASSIGNED
+        },
+        transaction
+      })
+
+      for (const d of assignedDeliveries) {
+        await d.update({ riderId: null, status: DELIVERY_STATUS.CONFIRMED }, { transaction })
+        await Delivery_status_logs.create(
+          {
+            deliveryId: d.id,
+            status: DELIVERY_STATUS.CONFIRMED,
+            changedBy: req.user.id,
+            notes: `Rider ${user.name} was ${status} by admin. Order returned to available dispatch pool.`
+          },
+          { transaction }
+        )
+      }
+    }
+
+    await transaction.commit()
 
     res.status(200).json({
       success: true,
@@ -183,6 +220,7 @@ const updateUserStatus = async (req, res, next) => {
       user: user.toJSON()
     })
   } catch (error) {
+    if (transaction) await transaction.rollback()
     next(error)
   }
 }
@@ -284,17 +322,30 @@ const getRiders = async (req, res, next) => {
   }
 }
 
-// 8. Assign or reassign rider to a delivery
+// 8. Assign or reassign rider to a delivery (with row locking & full pre-conditions)
 const assignRider = async (req, res, next) => {
   const transaction = await sequelize.transaction()
   try {
     const { id } = req.params // deliveryId
     const { riderId } = req.body
 
-    const delivery = await Deliveries.findByPk(id, { transaction })
+    const delivery = await Deliveries.findByPk(id, {
+      transaction,
+      lock: transaction.LOCK.UPDATE
+    })
+
     if (!delivery) {
       await transaction.rollback()
       throw new AppError("Delivery not found", 404)
+    }
+
+    // Terminal state protection: Cannot assign to DELIVERED or CANCELLED deliveries
+    if (delivery.status === DELIVERY_STATUS.DELIVERED || delivery.status === DELIVERY_STATUS.CANCELLED) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: `Cannot assign rider to delivery in terminal state '${delivery.status}'`
+      })
     }
 
     // Verify delivery is in assignable state
@@ -304,6 +355,21 @@ const assignRider = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: `Cannot assign rider to delivery with status '${delivery.status}'`
+      })
+    }
+
+    const payment = await Payments.findOne({ where: { deliveryId: delivery.id }, transaction })
+
+    // Payment Pre-condition: Pre-paid orders (CARD/TRANSFER) must be paid before dispatch
+    if (
+      payment &&
+      [PAYMENT_METHODS.CARD, PAYMENT_METHODS.TRANSFER].includes(payment.paymentMethod) &&
+      payment.paymentStatus !== PAYMENT_STATUS.SUCCESSFUL
+    ) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: "Cannot assign rider to unpaid pre-paid delivery. Payment must be confirmed first."
       })
     }
 
@@ -335,6 +401,23 @@ const assignRider = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: `Cannot assign rider: Rider availability is '${rider.riderProfile?.availabilityStatus}'. Only AVAILABLE riders can be assigned.`
+      })
+    }
+
+    // Invariant: Rider cannot already have an active transit delivery
+    const riderActiveJobs = await Deliveries.count({
+      where: {
+        riderId,
+        status: { [Op.in]: [DELIVERY_STATUS.ASSIGNED, DELIVERY_STATUS.PICKED_UP, DELIVERY_STATUS.IN_TRANSIT] }
+      },
+      transaction
+    })
+
+    if (riderActiveJobs > 0) {
+      await transaction.rollback()
+      return res.status(400).json({
+        success: false,
+        message: `Cannot assign rider: Rider ${rider.name} is already handling an active delivery run.`
       })
     }
 

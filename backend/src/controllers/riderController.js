@@ -1,3 +1,4 @@
+const { Op } = require("sequelize")
 const {
   Rider_profiles,
   Users,
@@ -7,7 +8,9 @@ const {
 const AppError = require("../utils/appError")
 const {
   RIDER_AVAILABILITY,
-  DELIVERY_STATUS
+  DELIVERY_STATUS,
+  PAYMENT_STATUS,
+  PAYMENT_METHODS
 } = require("../utils/constants")
 
 // 1. Get rider profile & statistics
@@ -83,12 +86,31 @@ const updateAvailability = async (req, res, next) => {
       throw new AppError("Rider profile not found", 404)
     }
 
-    // Safety rule: Cannot manually change availability while BUSY
-    if (profile.availabilityStatus === RIDER_AVAILABILITY.BUSY) {
+    // Safety rule: Cannot manually select BUSY (managed automatically by job dispatch)
+    if (availabilityStatus === RIDER_AVAILABILITY.BUSY) {
       return res.status(400).json({
         success: false,
-        message: "Cannot change availability status while actively handling a delivery job ('BUSY'). Complete or reassign the delivery first."
+        message: "Riders cannot manually select 'BUSY'. The system assigns BUSY status upon accepting a delivery job."
       })
+    }
+
+    // Safety rule: Cannot manually go OFFLINE while actively handling a delivery job
+    if (availabilityStatus === RIDER_AVAILABILITY.OFFLINE) {
+      const activeDeliveryCount = await Deliveries.count({
+        where: {
+          riderId: riderUserId,
+          status: {
+            [Op.in]: [DELIVERY_STATUS.ASSIGNED, DELIVERY_STATUS.PICKED_UP, DELIVERY_STATUS.IN_TRANSIT]
+          }
+        }
+      })
+
+      if (activeDeliveryCount > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot switch to OFFLINE while actively handling a delivery job. Complete or release your active job first."
+        })
+      }
     }
 
     await profile.update({ availabilityStatus })
@@ -103,7 +125,7 @@ const updateAvailability = async (req, res, next) => {
   }
 }
 
-// 4. View available delivery jobs (CONFIRMED & unassigned)
+// 4. View available delivery jobs (CONFIRMED & unassigned & pre-paid/COD ready)
 const getAvailableJobs = async (req, res, next) => {
   try {
     const jobs = await Deliveries.findAll({
@@ -121,7 +143,13 @@ const getAvailableJobs = async (req, res, next) => {
         {
           model: Payments,
           as: "payment",
-          attributes: ["paymentMethod", "paymentStatus"]
+          where: {
+            [Op.or]: [
+              { paymentMethod: PAYMENT_METHODS.CASH },
+              { paymentStatus: PAYMENT_STATUS.SUCCESSFUL }
+            ]
+          },
+          attributes: ["paymentMethod", "paymentStatus", "amount"]
         }
       ]
     })

@@ -1,21 +1,35 @@
 {
   "name": "delivery-platform-system",
   "version": "1.0.0",
-  "description": "Full Delivery System Platform REST API Backend",
+  "description": "Full-Stack Delivery System Platform (Express API + React Vite)",
   "private": true,
   "scripts": {
+    "dev": "concurrently -n \"API,WEB\" -c \"cyan,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "pnpm --prefix frontend dev",
     "start:backend": "npm --prefix backend start",
+    "start:frontend": "pnpm --prefix frontend preview",
+    "build:frontend": "pnpm --prefix frontend build",
+    "build": "pnpm --prefix frontend build",
     "test:backend": "npm --prefix backend test",
+    "test:frontend": "pnpm --prefix frontend build",
+    "test:unify": "node test/unification.test.mjs",
+    "test": "npm run test:backend && pnpm --prefix frontend build && node test/unification.test.mjs",
     "db:migrate": "npm --prefix backend run db:migrate",
     "db:seed": "npm --prefix backend run db:seed",
     "db:migrate:undo": "npm --prefix backend run db:migrate:undo"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   },
   "keywords": [
     "delivery",
     "logistics",
     "rider",
     "express",
+    "react",
+    "vite",
+    "tailwind",
     "postgresql",
     "sequelize"
   ],
