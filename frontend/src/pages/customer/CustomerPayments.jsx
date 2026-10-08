@@ -43,7 +43,7 @@ export default function CustomerPayments() {
           Billing & Payment Receipts
         </h1>
         <p className="text-xs text-slate-500 mt-0.5">
-          Review your delivery payment receipts, transaction references, and settlement statuses across Lagos
+          Review your delivery payment receipts, transaction references, and settlement statuses across shipments
         </p>
       </div>
 

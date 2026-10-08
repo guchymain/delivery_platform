@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { deliveryAPI, paymentAPI } from '../../lib/api';
-import { calculateDeliveryFee, formatCurrency } from '../../lib/utils';
+import { calculateDeliveryFee, formatCurrency, formatNaira } from '../../lib/utils';
 import { useAuth } from '../../context/AuthContext';
 import {
   PackagePlus,
@@ -16,17 +16,27 @@ import {
   Building,
   Sparkles,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Globe
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const LAGOS_PRESETS = [
-  'Lekki Phase 1, Lagos',
-  'Victoria Island (VI), Lagos',
-  'Ikoyi, Lagos',
-  'Ikeja GRA, Lagos',
-  'Yaba Tech Cluster, Lagos',
-  'Surulere, Lagos'
+const NIGERIA_PICKUP_PRESETS = [
+  'Lekki Phase 1, Lagos, Nigeria',
+  'Victoria Island, Lagos, Nigeria',
+  'Central Business District, Abuja, Nigeria',
+  'GRA Phase 2, Port Harcourt, Rivers State, Nigeria',
+  'Bodija, Ibadan, Oyo State, Nigeria',
+  'Commercial Area, Kano, Nigeria'
+];
+
+const DESTINATION_PRESETS = [
+  'Ikeja GRA, Lagos, Nigeria',
+  'Maitama, Abuja FCT, Nigeria',
+  'Trans-Amadi, Port Harcourt, Nigeria',
+  'Oxford Street, London, United Kingdom',
+  'Broadway, New York, NY, United States',
+  'Bay Street, Toronto, ON, Canada'
 ];
 
 export default function CreateDelivery() {
@@ -38,8 +48,8 @@ export default function CreateDelivery() {
   const initialEstimate = location.state || {};
 
   const [formData, setFormData] = useState({
-    pickup_address: initialEstimate.pickupArea ? `${initialEstimate.pickupArea}, Lagos` : '',
-    delivery_address: initialEstimate.dropoffArea ? `${initialEstimate.dropoffArea}, Lagos` : '',
+    pickup_address: initialEstimate.pickupArea || '',
+    delivery_address: initialEstimate.dropoffArea || '',
     sender_name: user?.name || `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || '',
     sender_phone: user?.phone || '',
     recipient_name: '',
@@ -132,21 +142,21 @@ export default function CreateDelivery() {
       {/* Page Header */}
       <div className="mb-8">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#003896] text-xs font-bold uppercase tracking-wider mb-2 border border-blue-100">
-          <Sparkles className="w-3.5 h-3.5 text-[#FFC50F]" />
-          Lagos Intra-City Dispatch
+          <Globe className="w-3.5 h-3.5 text-[#FFC50F]" />
+          Nigeria & International Logistics Gateway
         </div>
         <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-          <PackagePlus className="w-8 h-8 text-[#003896]" /> Book a New Delivery
+          <PackagePlus className="w-8 h-8 text-[#003896]" /> Book a New Shipment
         </h1>
         <p className="mt-1 text-xs sm:text-sm text-slate-600">
-          Enter pickup & dropoff coordinates in Lagos. Verified couriers are dispatched on-demand.
+          Enter pickup coordinates in Nigeria, and dropoff anywhere in Nigeria or over 200 global destinations.
         </p>
 
-        {/* Topship Cut-off Time Alert */}
-        <div className="mt-4 p-3 bg-white rounded-2xl border border-blue-100 shadow-xs flex items-center gap-3 text-xs text-slate-700">
-          <Clock className="w-4 h-4 text-[#FFC50F] flex-shrink-0" />
+        {/* Dispatch Window Alert */}
+        <div className="mt-4 p-3.5 bg-white rounded-2xl border border-blue-100 shadow-xs flex items-center gap-3 text-xs text-slate-700">
+          <Clock className="w-4 h-4 text-[#FFC50F] shrink-0" />
           <span>
-            <strong>Same-Day Dispatch Window:</strong> Requests submitted before <strong>2:00 PM (WAT)</strong> qualify for guaranteed same-day delivery across Lagos.
+            <strong>Express Dispatch Window:</strong> Metro shipments requested before <strong>2:00 PM (WAT)</strong> qualify for same-day collection. Inter-state & international air express departs on scheduled daily transit cycles.
           </span>
         </div>
       </div>
@@ -162,7 +172,7 @@ export default function CreateDelivery() {
             {/* Pickup */}
             <div className="space-y-4 bg-slate-50/70 p-5 rounded-2xl border border-slate-200/70">
               <span className="text-[10px] font-bold text-[#003896] uppercase tracking-wider">
-                Pickup Origin
+                Pickup Origin (Nigeria)
               </span>
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -174,13 +184,13 @@ export default function CreateDelivery() {
                   required
                   value={formData.pickup_address}
                   onChange={handleChange}
-                  placeholder="e.g. 14 Admiralty Way, Lekki Phase 1, Lagos"
+                  placeholder="e.g. 14 Admiralty Way, Lekki Phase 1, Lagos, Nigeria"
                   className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896]"
                 />
-                {/* Lagos quick presets */}
+                {/* Nigeria quick presets */}
                 <div className="flex flex-wrap gap-1 mt-2">
                   <span className="text-[10px] text-slate-400 font-medium">Quick pick:</span>
-                  {LAGOS_PRESETS.slice(0, 3).map((p) => (
+                  {NIGERIA_PICKUP_PRESETS.slice(0, 3).map((p) => (
                     <button
                       key={p}
                       type="button"
@@ -232,7 +242,7 @@ export default function CreateDelivery() {
             {/* Destination */}
             <div className="space-y-4 bg-slate-50/70 p-5 rounded-2xl border border-slate-200/70">
               <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">
-                Dropoff Destination
+                Destination (Nigeria or International)
               </span>
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -244,13 +254,13 @@ export default function CreateDelivery() {
                   required
                   value={formData.delivery_address}
                   onChange={handleChange}
-                  placeholder="e.g. 5 Isaac John Street, GRA Ikeja, Lagos"
+                  placeholder="e.g. 5 Isaac John Street, GRA Ikeja, Lagos OR London, UK"
                   className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896]"
                 />
-                {/* Lagos quick presets */}
+                {/* Destination quick presets */}
                 <div className="flex flex-wrap gap-1 mt-2">
                   <span className="text-[10px] text-slate-400 font-medium">Quick pick:</span>
-                  {LAGOS_PRESETS.slice(3, 6).map((p) => (
+                  {DESTINATION_PRESETS.slice(0, 3).map((p) => (
                     <button
                       key={p}
                       type="button"
@@ -379,8 +389,13 @@ export default function CreateDelivery() {
                 </span>
                 <p className="text-xs text-slate-500 mt-0.5">Calculated transparently</p>
               </div>
-              <div className="text-2xl font-black text-[#003896]">
-                {formatCurrency(estimatedFee)}
+              <div className="text-right">
+                <span className="text-2xl font-black text-[#003896]">
+                  {formatCurrency(estimatedFee)}
+                </span>
+                <span className="block text-xs font-bold text-slate-600">
+                  ≈ {formatNaira(estimatedFee)}
+                </span>
               </div>
             </div>
           </div>

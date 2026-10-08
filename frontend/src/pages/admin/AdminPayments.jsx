@@ -86,7 +86,7 @@ export default function AdminPayments() {
             <CreditCard className="w-7 h-7 text-brand-blue" /> Platform Financial Ledger
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Global payment transactions, escrow reconciliation, and payment refunds across Lagos deliveries
+            Global payment transactions, escrow reconciliation, and payment refunds across platform deliveries
           </p>
         </div>
 
@@ -163,7 +163,8 @@ export default function AdminPayments() {
                 </tr>
               ) : (
                 filteredPayments.map((p) => {
-                  const canRefund = p.status === 'SUCCESSFUL';
+                  const payStatus = p.paymentStatus || p.status || p.payment_status || 'PENDING';
+                  const canRefund = payStatus === 'SUCCESSFUL';
                   return (
                     <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="px-5 py-4 font-mono font-black text-xs text-brand-blue">
@@ -187,7 +188,7 @@ export default function AdminPayments() {
                         </span>
                       </td>
                       <td className="px-5 py-4">
-                        <StatusBadge status={p.status} type="payment" />
+                        <StatusBadge status={payStatus} type="payment" />
                       </td>
                       <td className="px-5 py-4 text-xs text-slate-400 whitespace-nowrap font-medium">
                         {formatDate(p.createdAt)}

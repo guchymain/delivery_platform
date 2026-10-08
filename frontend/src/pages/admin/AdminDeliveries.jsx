@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { adminAPI, deliveryAPI } from '../../lib/api';
-import { formatCurrency, formatDate } from '../../lib/utils';
+import { formatCurrency, formatDate, getPaymentStatus } from '../../lib/utils';
 import StatusBadge from '../../components/common/StatusBadge';
 import Modal from '../../components/common/Modal';
 import {
@@ -93,7 +93,7 @@ export default function AdminDeliveries() {
             <Package className="w-7 h-7 text-brand-blue" /> Platform Deliveries Monitor
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Global delivery oversight, status compliance, and Lagos route dispatch management
+            Global delivery oversight, status compliance, and nationwide route dispatch management
           </p>
         </div>
 
@@ -206,7 +206,7 @@ export default function AdminDeliveries() {
                       <StatusBadge status={del.status} type="delivery" />
                     </td>
                     <td className="px-5 py-4">
-                      <StatusBadge status={del.payment_status || del.paymentStatus} type="payment" />
+                      <StatusBadge status={getPaymentStatus(del)} type="payment" />
                     </td>
                     <td className="px-5 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">

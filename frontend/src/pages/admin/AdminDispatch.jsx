@@ -89,13 +89,13 @@ export default function AdminDispatch() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-[#003896] text-[10px] font-bold uppercase tracking-wider mb-1">
-            <Compass className="w-3 h-3 text-[#FFC50F]" /> Lagos Fleet Dispatch
+            <Compass className="w-3 h-3 text-[#FFC50F]" /> Courier Fleet Dispatch
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             Active Dispatch Console
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Manually match pending and confirmed shipments with active Lagos couriers
+            Manually match pending and confirmed shipments with active couriers
           </p>
         </div>
 
@@ -241,7 +241,7 @@ export default function AdminDispatch() {
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2 uppercase tracking-wider">
-              <Bike className="w-4 h-4 text-amber-600" /> Active Lagos Couriers
+              <Bike className="w-4 h-4 text-amber-600" /> Active Couriers
             </h3>
             <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold">
               {availableRiders.length} available

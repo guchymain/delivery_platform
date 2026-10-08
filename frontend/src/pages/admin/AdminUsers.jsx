@@ -118,7 +118,7 @@ export default function AdminUsers() {
             <Users className="w-7 h-7 text-brand-blue" /> Platform User Governance
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Enforce role-based access permissions, account statuses, and compliance across Lagos platform accounts
+            Enforce role-based access permissions, account statuses, and compliance across platform accounts
           </p>
         </div>
 

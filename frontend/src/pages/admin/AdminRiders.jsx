@@ -61,7 +61,7 @@ export default function AdminRiders() {
             <Bike className="w-7 h-7 text-brand-blue" /> Courier Fleet Management
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Monitor real-time courier availability, rating quality, and vehicle compliance across Lagos transit zones
+            Monitor real-time courier availability, rating quality, and vehicle compliance across active transit zones
           </p>
         </div>
 

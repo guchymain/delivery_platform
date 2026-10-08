@@ -44,12 +44,14 @@ export const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
-      {/* Top micro-announcement bar (Topship style: Lagos delivery highlight) */}
-      <div className="bg-[#003896] text-white py-1 px-4 text-[11px] font-medium text-center flex items-center justify-center gap-2">
+      {/* Top micro-announcement bar (SwiftShip Nigeria & Global delivery highlight) */}
+      <div className="bg-[#003896] text-white py-1.5 px-4 text-[11px] font-medium text-center flex items-center justify-center gap-2">
         <span className="inline-flex items-center gap-1 font-semibold text-[#FFC50F]">
-          <Sparkles className="w-3 h-3" /> Same-Day Lagos Delivery:
+          <Sparkles className="w-3 h-3" /> Nigeria & Worldwide Delivery:
         </span>
-        <span className="text-blue-100 hidden sm:inline">Book before 2:00 PM (WAT) for guaranteed island & mainland dispatch.</span>
+        <span className="text-blue-100 hidden sm:inline">
+          Doorstep pickup across Nigeria • Express delivery to 200+ global destinations.
+        </span>
         <Link to="/track" className="underline text-[#FFC50F] hover:text-white ml-1 font-bold">
           Track a shipment &rarr;
         </Link>
@@ -65,14 +67,14 @@ export const Navbar = () => {
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5 leading-none">
                 <span className="font-extrabold text-xl tracking-tight text-slate-900">
-                  Topship<span className="text-[#FFC50F]">.</span>
+                  SwiftShip<span className="text-[#FFC50F]">.</span>
                 </span>
                 <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-[#FFC50F]/20 text-[#003896] border border-[#FFC50F]/40">
-                  LAGOS
+                  NIGERIA &bull; GLOBAL
                 </span>
               </div>
               <span className="text-[10px] font-medium text-slate-500 tracking-tight">
-                Doorstep Delivery Service
+                Doorstep & International Logistics
               </span>
             </div>
           </Link>

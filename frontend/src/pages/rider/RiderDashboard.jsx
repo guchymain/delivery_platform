@@ -77,22 +77,22 @@ export default function RiderDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
-      {/* Topship Courier Header Banner */}
+      {/* SwiftShip Courier Header Banner */}
       <div className="bg-[#003896] rounded-3xl p-7 sm:p-8 text-white shadow-xl shadow-blue-900/10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative overflow-hidden">
         <div className="space-y-1 relative z-10">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/10 text-[#FFC50F]">
-              Topship Fleet • Lagos Courier
+              SwiftShip Fleet • Courier Dispatch
             </span>
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/30 font-mono font-bold text-blue-100">
-              {profile?.vehicleType || profile?.vehicle_type || 'MOTORCYCLE'} • {profile?.plateNumber || profile?.vehicle_number || 'LAGOS'}
+              {profile?.vehicleType || profile?.vehicle_type || 'MOTORCYCLE'} • {profile?.plateNumber || profile?.vehicle_number || 'ACTIVE'}
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
             Courier Console: {user?.name || user?.first_name || 'Rider'}
           </h1>
           <p className="text-blue-100 text-xs sm:text-sm max-w-xl">
-            Toggle your shift availability to receive instant Lagos doorstep dispatches.
+            Toggle your shift availability to receive instant doorstep and hub dispatches.
           </p>
         </div>
 

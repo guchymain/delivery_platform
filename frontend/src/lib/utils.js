@@ -27,6 +27,44 @@ export const formatCurrency = (amount) => {
   }).format(num)
 }
 
+export const formatNaira = (amountInUSD) => {
+  const numUSD = Number(amountInUSD) || 0
+  // Standard conversion rate of ₦1,500 / USD for Nigerian customer clarity
+  const naira = numUSD * 1500
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 0
+  }).format(naira)
+}
+
+export const getPaymentStatus = (delivery) => {
+  if (!delivery) return 'PENDING'
+  if (delivery.status === 'DELIVERED') return 'SUCCESSFUL'
+  return (
+    delivery.payment?.paymentStatus ||
+    delivery.payment?.status ||
+    delivery.paymentStatus ||
+    delivery.payment_status ||
+    delivery.payments?.[0]?.paymentStatus ||
+    delivery.payments?.[0]?.status ||
+    'PENDING'
+  )
+}
+
+export const getPaymentMethod = (delivery) => {
+  if (!delivery) return 'CASH'
+  return (
+    delivery.payment?.paymentMethod ||
+    delivery.payment?.method ||
+    delivery.paymentMethod ||
+    delivery.payment_method ||
+    delivery.payments?.[0]?.paymentMethod ||
+    delivery.payments?.[0]?.method ||
+    'CASH'
+  )
+}
+
 export const STATUS_STEPS = [
   'PENDING',
   'CONFIRMED',

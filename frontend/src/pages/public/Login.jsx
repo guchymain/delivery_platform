@@ -64,14 +64,14 @@ export default function Login() {
             <Package className="w-7 h-7 text-[#FFC50F]" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            Sign in to Topship
+            Sign in to SwiftShip
           </h2>
           <p className="mt-1 text-xs sm:text-sm text-slate-500">
             Access your customer shipments, rider console, or dispatch cockpit
           </p>
         </div>
 
-        {/* Topship Demo Fill Helper */}
+        {/* SwiftShip Demo Fill Helper */}
         <div className="bg-blue-50/60 border border-blue-200/80 rounded-2xl p-3.5 text-xs text-slate-700">
           <div className="font-bold text-[#003896] flex items-center gap-1.5 mb-2 text-[11px] uppercase tracking-wider">
             <UserCheck className="w-3.5 h-3.5 text-[#FFC50F]" /> 1-Click Demo Login Fill:

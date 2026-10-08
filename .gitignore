@@ -58,3 +58,4 @@ lerna-debug.log*
 Thumbs.db
 *.pem
 test
+seeders

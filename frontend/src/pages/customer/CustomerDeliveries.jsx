@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { deliveryAPI } from '../../lib/api';
-import { formatCurrency, formatDate } from '../../lib/utils';
+import { formatCurrency, formatDate, getPaymentStatus } from '../../lib/utils';
 import StatusBadge from '../../components/common/StatusBadge';
 import Modal from '../../components/common/Modal';
 import {
@@ -98,7 +98,7 @@ export default function CustomerDeliveries() {
             My Delivery Shipments
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Track, filter, and monitor all your packages moving across Lagos
+            Track, filter, and monitor all your packages moving across Nigeria and worldwide
           </p>
         </div>
         <Link
@@ -187,7 +187,7 @@ export default function CustomerDeliveries() {
                   const fee = del.deliveryFee || del.delivery_fee;
                   const desc = del.packageDescription || del.package_description;
                   const dest = del.deliveryAddress || del.delivery_address;
-                  const payStatus = del.payments?.[0]?.paymentStatus || del.payment_status || 'PENDING';
+                  const payStatus = getPaymentStatus(del);
                   const canCancel = ['PENDING', 'CONFIRMED'].includes(del.status);
 
                   return (

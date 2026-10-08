@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { deliveryAPI, paymentAPI } from '../../lib/api';
-import { formatCurrency, formatDate } from '../../lib/utils';
+import { formatCurrency, formatDate, getPaymentStatus } from '../../lib/utils';
 import StatusBadge from '../../components/common/StatusBadge';
 import {
   Package,
@@ -58,17 +58,17 @@ export default function CustomerDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
-      {/* Topship Welcome Banner */}
+      {/* SwiftShip Welcome Banner */}
       <div className="bg-[#003896] rounded-3xl p-7 sm:p-8 text-white shadow-xl shadow-blue-900/10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative overflow-hidden">
         <div className="space-y-1 relative z-10">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 text-[#FFC50F] text-[10px] font-bold uppercase tracking-wider mb-1">
-            <Sparkles className="w-3 h-3" /> Lagos Customer Hub
+            <Sparkles className="w-3 h-3" /> SwiftShip Customer Hub
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
             Welcome, {user?.name || user?.first_name || 'Customer'}!
           </h1>
           <p className="text-blue-100 text-xs sm:text-sm max-w-xl">
-            Dispatch items across Lagos same-day, track shipments in real time, and manage your billing ledger.
+            Dispatch packages across Nigeria, send global express shipments, track progress in real time, and manage your billing ledger.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 relative z-10">
@@ -167,7 +167,7 @@ export default function CustomerDashboard() {
               const deliveryFee = del.deliveryFee || del.delivery_fee;
               const packageDesc = del.packageDescription || del.package_description;
               const dropAddress = del.deliveryAddress || del.delivery_address;
-              const payStatus = del.payments?.[0]?.paymentStatus || del.payment_status || 'PENDING';
+              const payStatus = getPaymentStatus(del);
 
               return (
                 <div
@@ -250,7 +250,7 @@ export default function CustomerDashboard() {
                   const fee = d.deliveryFee || d.delivery_fee;
                   const desc = d.packageDescription || d.package_description;
                   const dest = d.deliveryAddress || d.delivery_address;
-                  const payStatus = d.payments?.[0]?.paymentStatus || d.payment_status || 'PENDING';
+                  const payStatus = getPaymentStatus(d);
 
                   return (
                     <tr key={d.id} className="hover:bg-slate-50/50">

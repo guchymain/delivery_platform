@@ -828,17 +828,19 @@ const updateDeliveryStatus = async (req, res, next) => {
         )
       }
 
-      // COD Rule: If CASH on delivery, automatically mark payment as SUCCESSFUL upon delivery
+      // Settlement upon delivery: If payment is still PENDING, automatically settle upon delivery handover
       if (
         payment &&
-        payment.paymentMethod === PAYMENT_METHODS.CASH &&
         payment.paymentStatus === PAYMENT_STATUS.PENDING
       ) {
         await payment.update(
           {
             paymentStatus: PAYMENT_STATUS.SUCCESSFUL,
             paidAt: now,
-            notes: "Cash collected by rider upon delivery dropoff"
+            notes:
+              payment.paymentMethod === PAYMENT_METHODS.CASH
+                ? "Cash collected by rider upon delivery dropoff"
+                : `Payment confirmed upon completed delivery (${payment.paymentMethod})`
           },
           { transaction }
         )

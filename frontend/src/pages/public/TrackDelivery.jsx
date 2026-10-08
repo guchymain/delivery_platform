@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useParams, Link } from 'react-router-dom';
 import { deliveryAPI } from '../../lib/api';
-import { formatCurrency, formatDate } from '../../lib/utils';
+import { formatCurrency, formatDate, getPaymentStatus, getPaymentMethod } from '../../lib/utils';
 import StatusBadge from '../../components/common/StatusBadge';
 import DeliveryStepper from '../../components/common/DeliveryStepper';
 import {
@@ -81,8 +81,8 @@ export default function TrackDelivery() {
   const recipientPhone = delivery?.recipientPhone || delivery?.recipient_phone || '';
   const packageWeight = delivery?.packageWeight || delivery?.weight || '1.0';
   const packageDesc = delivery?.packageDescription || delivery?.package_description || 'Standard Delivery Package';
-  const paymentStatus = delivery?.payments?.[0]?.paymentStatus || delivery?.payment_status || 'PENDING';
-  const paymentMethod = delivery?.payments?.[0]?.paymentMethod || delivery?.payment_method || 'CARD';
+  const paymentStatus = getPaymentStatus(delivery);
+  const paymentMethod = getPaymentMethod(delivery);
   const deliveryFee = delivery?.deliveryFee || delivery?.delivery_fee || 5.0;
   const statusLogs = delivery?.statusLogs || delivery?.status_logs || [];
 
@@ -98,7 +98,7 @@ export default function TrackDelivery() {
           Track Your Delivery
         </h1>
         <p className="mt-2 text-xs sm:text-sm text-slate-600">
-          Enter your unique tracking code below for live milestone tracking across Lagos.
+          Enter your unique tracking code below for live milestone tracking across Nigeria and worldwide.
         </p>
 
         {/* Tracking Input Bar */}
@@ -176,7 +176,7 @@ export default function TrackDelivery() {
       {/* Delivery Result Card */}
       {!loading && delivery && (
         <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-blue-900/5 overflow-hidden">
-          {/* Topship Header Card */}
+          {/* SwiftShip Header Card */}
           <div className="p-6 sm:p-8 bg-[#003896] text-white flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
@@ -264,6 +264,10 @@ export default function TrackDelivery() {
                 <div className="flex justify-between">
                   <span className="text-slate-500">Delivery Fee:</span>
                   <span className="font-black text-[#003896]">{formatCurrency(deliveryFee)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500">Payment Status:</span>
+                  <StatusBadge status={paymentStatus} type="payment" size="sm" />
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Payment Mode:</span>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { riderAPI } from '../../lib/api';
-import { formatCurrency, formatDate } from '../../lib/utils';
+import { formatCurrency, formatDate, getPaymentStatus, getPaymentMethod } from '../../lib/utils';
 import StatusBadge from '../../components/common/StatusBadge';
 import DeliveryStepper from '../../components/common/DeliveryStepper';
 import {
@@ -129,7 +129,8 @@ export default function ActiveDelivery() {
   const pickupPhone = delivery.pickupContactPhone || delivery.sender_phone;
   const recipientName = delivery.recipientName || delivery.recipient_name || 'Recipient';
   const recipientPhone = delivery.recipientPhone || delivery.recipient_phone;
-  const paymentMethod = delivery.payments?.[0]?.paymentMethod || delivery.payment_method || 'CASH';
+  const paymentMethod = getPaymentMethod(delivery);
+  const paymentStatus = getPaymentStatus(delivery);
 
   // Determine next action
   let nextAction = null;
@@ -153,7 +154,7 @@ export default function ActiveDelivery() {
     };
   }
 
-  const isCashPayment = paymentMethod === 'CASH';
+  const isCashPayment = paymentMethod === 'CASH' && paymentStatus !== 'SUCCESSFUL' && paymentStatus !== 'PAID';
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 font-sans">
@@ -161,7 +162,7 @@ export default function ActiveDelivery() {
       <div className="flex items-center justify-between">
         <div>
           <span className="text-[10px] uppercase font-bold text-[#003896] tracking-wider">
-            Topship Courier Transit Console
+            SwiftShip Courier Transit Console
           </span>
           <h1 className="text-2xl font-black text-slate-900 mt-0.5">
             Order #{trackingCode}

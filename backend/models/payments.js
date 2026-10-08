@@ -87,5 +87,15 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'payments'
   });
 
+  Payments.prototype.toJSON = function () {
+    const values = { ...this.get() };
+    values.status = values.paymentStatus;
+    values.payment_status = values.paymentStatus;
+    values.method = values.paymentMethod;
+    values.payment_method = values.paymentMethod;
+    values.transaction_reference = values.transactionReference;
+    return values;
+  };
+
   return Payments;
 };

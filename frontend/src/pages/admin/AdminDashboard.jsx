@@ -42,17 +42,17 @@ export default function AdminDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
-      {/* Topship Operations Banner */}
+      {/* SwiftShip Operations Banner */}
       <div className="bg-[#003896] rounded-3xl p-7 sm:p-8 text-white shadow-xl shadow-blue-900/10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative overflow-hidden">
         <div className="space-y-1 relative z-10">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 text-[#FFC50F] text-[10px] font-bold uppercase tracking-wider mb-1">
-            <Sparkles className="w-3 h-3" /> Topship Operations & Control Tower
+            <Sparkles className="w-3 h-3" /> SwiftShip Operations & Control Tower
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
             Logistics Command Center
           </h1>
           <p className="text-blue-100 text-xs sm:text-sm max-w-xl">
-            Monitor real-time Lagos courier dispatching, user compliance status, and revenue settlement ledgers.
+            Monitor real-time courier dispatching across Nigeria, international shipments, and revenue settlement ledgers.
           </p>
         </div>
 
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
             <div className="w-10 h-10 rounded-2xl bg-blue-50 text-[#003896] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
               <Compass className="w-5 h-5 text-[#003896]" />
             </div>
-            <h3 className="font-black text-slate-900 text-base">Lagos Dispatch Console</h3>
+            <h3 className="font-black text-slate-900 text-base">Fleet Dispatch Console</h3>
             <p className="text-xs text-slate-500 mt-1">
               Match unassigned customer delivery requests with active and available couriers in real time.
             </p>

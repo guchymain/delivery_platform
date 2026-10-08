@@ -82,10 +82,10 @@ export default function Register() {
             <Package className="w-7 h-7 text-[#FFC50F]" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            Join Topship Lagos
+            Join SwiftShip
           </h2>
           <p className="mt-1 text-xs sm:text-sm text-slate-500">
-            Create an account to book intra-city shipments or earn as a verified courier
+            Create an account to book nationwide Nigerian and global shipments or earn as a verified courier
           </p>
         </div>
 

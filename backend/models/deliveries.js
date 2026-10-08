@@ -147,5 +147,31 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'deliveries'
   });
 
+  Deliveries.prototype.toJSON = function () {
+    const values = { ...this.get() };
+    if (this.payment) {
+      const effectivePaymentStatus =
+        values.status === DELIVERY_STATUS.DELIVERED && this.payment.paymentStatus === 'PENDING'
+          ? 'SUCCESSFUL'
+          : this.payment.paymentStatus;
+      values.paymentStatus = effectivePaymentStatus;
+      values.payment_status = effectivePaymentStatus;
+      values.paymentMethod = this.payment.paymentMethod;
+      values.payment_method = this.payment.paymentMethod;
+      values.payments = [
+        typeof this.payment.toJSON === 'function'
+          ? { ...this.payment.toJSON(), paymentStatus: effectivePaymentStatus }
+          : { ...this.payment, paymentStatus: effectivePaymentStatus }
+      ];
+    } else {
+      values.paymentStatus = values.status === DELIVERY_STATUS.DELIVERED ? 'SUCCESSFUL' : 'PENDING';
+      values.payment_status = values.paymentStatus;
+      values.paymentMethod = 'CASH';
+      values.payment_method = 'CASH';
+      values.payments = [];
+    }
+    return values;
+  };
+
   return Deliveries;
 };

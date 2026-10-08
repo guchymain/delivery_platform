@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { deliveryAPI, paymentAPI } from '../../lib/api';
-import { formatCurrency, formatDate } from '../../lib/utils';
+import { formatCurrency, formatDate, getPaymentStatus, getPaymentMethod } from '../../lib/utils';
 import StatusBadge from '../../components/common/StatusBadge';
 import DeliveryStepper from '../../components/common/DeliveryStepper';
 import Modal from '../../components/common/Modal';
@@ -66,7 +66,7 @@ export default function DeliveryDetail() {
       });
       toast.success('Payment recorded successfully!');
       setPayModalOpen(false);
-      fetchDelivery();
+      await fetchDelivery();
     } catch (err) {
       const msg = err.response?.data?.message || 'Payment processing failed';
       toast.error(msg);
@@ -81,7 +81,7 @@ export default function DeliveryDetail() {
       await deliveryAPI.cancel(delivery.id, cancelReason);
       toast.success('Delivery cancelled.');
       setCancelModalOpen(false);
-      fetchDelivery();
+      await fetchDelivery();
     } catch (err) {
       const msg = err.response?.data?.message || 'Cancellation failed';
       toast.error(msg);
@@ -112,11 +112,13 @@ export default function DeliveryDetail() {
   const packageDesc = delivery.packageDescription || delivery.package_description;
   const packageWeight = delivery.packageWeight || delivery.weight || '1.0';
   const packageType = delivery.packageType || delivery.package_type || 'PARCEL';
-  const paymentStatus = delivery.payments?.[0]?.paymentStatus || delivery.payment_status || 'PENDING';
+  const paymentStatus = getPaymentStatus(delivery);
+  const paymentMethodDisplay = getPaymentMethod(delivery);
   const statusLogs = delivery.statusLogs || delivery.status_logs || [];
 
+  const isPaid = paymentStatus === 'SUCCESSFUL' || paymentStatus === 'PAID';
   const canCancel = ['PENDING', 'CONFIRMED'].includes(delivery.status);
-  const needsPayment = paymentStatus === 'PENDING';
+  const needsPayment = !isPaid && delivery.status !== 'CANCELLED';
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 font-sans">
@@ -137,14 +139,18 @@ export default function DeliveryDetail() {
             <Share2 className="w-3.5 h-3.5" /> Public Tracking Link
           </Link>
 
-          {needsPayment && delivery.status !== 'CANCELLED' && (
+          {isPaid && delivery.status !== 'CANCELLED' ? (
+            <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 shadow-xs">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Paid ({formatCurrency(deliveryFee)})
+            </div>
+          ) : needsPayment ? (
             <button
               onClick={() => setPayModalOpen(true)}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#003896] hover:bg-[#002c77] text-white text-xs font-extrabold shadow-sm transition-all cursor-pointer"
             >
               <CreditCard className="w-3.5 h-3.5 text-[#FFC50F]" /> Pay Now ({formatCurrency(deliveryFee)})
             </button>
-          )}
+          ) : null}
 
           {canCancel && (
             <button
@@ -163,7 +169,7 @@ export default function DeliveryDetail() {
         <div className="p-6 sm:p-7 bg-[#003896] text-white flex flex-wrap items-center justify-between gap-4">
           <div>
             <span className="text-[10px] uppercase font-bold text-blue-200 tracking-wider">
-              Lagos Shipment Order
+              SwiftShip Shipment Order
             </span>
             <h1 className="text-2xl font-mono font-black tracking-wide mt-0.5">
               {trackingCode}
@@ -242,9 +248,13 @@ export default function DeliveryDetail() {
                 <span className="text-slate-500">Delivery Fee</span>
                 <span className="font-black text-[#003896] text-sm">{formatCurrency(deliveryFee)}</span>
               </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Payment Status</span>
+                <StatusBadge status={paymentStatus} type="payment" size="sm" />
+              </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Payment Preference</span>
-                <span className="font-bold text-slate-900">{delivery.payment_method || 'CASH'}</span>
+                <span className="font-bold text-slate-900">{paymentMethodDisplay}</span>
               </div>
             </div>
 
