@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/common/Navbar';
+import Footer from './components/common/Footer';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Public pages
@@ -40,7 +41,7 @@ export default function App() {
       <AuthProvider>
         <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-indigo-500 selection:text-white">
           <Navbar />
-          <main className="flex-1 pb-16">
+          <main className="flex-1">
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
@@ -214,6 +215,7 @@ export default function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
+          <Footer />
           <Toaster
             position="top-right"
             toastOptions={{

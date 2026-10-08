@@ -14,8 +14,45 @@ const riderRoutes = require("./routes/rider.route")
 const paymentRoutes = require("./routes/payment.route")
 const adminRoutes = require("./routes/admin.route")
 
-app.use(cors())
-app.use(logger)
+// Configurable CORS setup
+const rawCorsOrigin = process.env.CORS_ORIGIN || '*';
+const allowedOrigins = rawCorsOrigin.split(',').map((o) => o.trim());
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow server-to-server, curl, mobile, or direct requests without Origin header
+    if (!origin) return callback(null, true);
+
+    // Allow wildcard or matching explicit origin
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Support local development origins
+    if (
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('http://127.0.0.1:')
+    ) {
+      return callback(null, true);
+    }
+
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 86400
+};
+
+app.use(cors(corsOptions));
+app.use(logger);
 app.use(express.json({ limit: "15kb" }))
 
 app.get("/", (req, res) => {

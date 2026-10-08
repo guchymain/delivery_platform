@@ -138,23 +138,23 @@ export default function CreateDelivery() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-sans">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-sans">
       {/* Page Header */}
-      <div className="mb-8">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#003896] text-xs font-bold uppercase tracking-wider mb-2 border border-blue-100">
-          <Globe className="w-3.5 h-3.5 text-[#FFC50F]" />
+      <div className="mb-10">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-[#003896] text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 border border-blue-100">
+          <Globe className="w-4 h-4 text-[#FFC50F]" />
           Nigeria & International Logistics Gateway
         </div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
           <PackagePlus className="w-8 h-8 text-[#003896]" /> Book a New Shipment
         </h1>
-        <p className="mt-1 text-xs sm:text-sm text-slate-600">
+        <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed">
           Enter pickup coordinates in Nigeria, and dropoff anywhere in Nigeria or over 200 global destinations.
         </p>
 
         {/* Dispatch Window Alert */}
-        <div className="mt-4 p-3.5 bg-white rounded-2xl border border-blue-100 shadow-xs flex items-center gap-3 text-xs text-slate-700">
-          <Clock className="w-4 h-4 text-[#FFC50F] shrink-0" />
+        <div className="mt-5 p-4 bg-white rounded-2xl border border-blue-100 shadow-xs flex items-center gap-3.5 text-xs sm:text-sm text-slate-700">
+          <Clock className="w-5 h-5 text-[#FFC50F] shrink-0" />
           <span>
             <strong>Express Dispatch Window:</strong> Metro shipments requested before <strong>2:00 PM (WAT)</strong> qualify for same-day collection. Inter-state & international air express departs on scheduled daily transit cycles.
           </span>
@@ -163,19 +163,19 @@ export default function CreateDelivery() {
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Route Section */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
-          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3 uppercase tracking-wider">
-            <MapPin className="w-4 h-4 text-[#003896]" /> 1. Origin & Destination Addresses
+        <div className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-10 shadow-sm space-y-6">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2.5 border-b border-slate-100 pb-4 uppercase tracking-wider">
+            <MapPin className="w-5 h-5 text-[#003896]" /> 1. Origin & Destination Addresses
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Pickup */}
-            <div className="space-y-4 bg-slate-50/70 p-5 rounded-2xl border border-slate-200/70">
-              <span className="text-[10px] font-bold text-[#003896] uppercase tracking-wider">
+            <div className="space-y-4 bg-slate-50/70 p-6 rounded-2xl border border-slate-200/70">
+              <span className="text-xs font-bold text-[#003896] uppercase tracking-wider">
                 Pickup Origin (Nigeria)
               </span>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-sm font-bold text-slate-800 mb-1.5">
                   Pickup Address *
                 </label>
                 <input
@@ -185,17 +185,17 @@ export default function CreateDelivery() {
                   value={formData.pickup_address}
                   onChange={handleChange}
                   placeholder="e.g. 14 Admiralty Way, Lekki Phase 1, Lagos, Nigeria"
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896]"
+                  className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#003896] font-medium transition-all"
                 />
                 {/* Nigeria quick presets */}
-                <div className="flex flex-wrap gap-1 mt-2">
-                  <span className="text-[10px] text-slate-400 font-medium">Quick pick:</span>
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                  <span className="text-xs text-slate-400 font-medium">Quick pick:</span>
                   {NIGERIA_PICKUP_PRESETS.slice(0, 3).map((p) => (
                     <button
                       key={p}
                       type="button"
                       onClick={() => handleApplyPreset('pickup_address', p)}
-                      className="text-[10px] text-[#003896] bg-blue-50 px-2 py-0.5 rounded-md hover:bg-blue-100 font-medium cursor-pointer"
+                      className="text-xs text-[#003896] bg-blue-50 px-2.5 py-1 rounded-lg hover:bg-blue-100 font-medium cursor-pointer transition-colors"
                     >
                       {p.split(',')[0]}
                     </button>
@@ -203,25 +203,25 @@ export default function CreateDelivery() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Sender Name</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Sender Name</label>
                   <input
                     type="text"
                     name="sender_name"
                     value={formData.sender_name}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Sender Phone</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Sender Phone</label>
                   <input
                     type="tel"
                     name="sender_phone"
                     value={formData.sender_phone}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium"
                   />
                 </div>
               </div>
@@ -234,18 +234,18 @@ export default function CreateDelivery() {
                   value={formData.pickup_notes}
                   onChange={handleChange}
                   placeholder="Gate code, landmark, or apartment floor"
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm"
                 />
               </div>
             </div>
 
             {/* Destination */}
-            <div className="space-y-4 bg-slate-50/70 p-5 rounded-2xl border border-slate-200/70">
-              <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">
+            <div className="space-y-4 bg-slate-50/70 p-6 rounded-2xl border border-slate-200/70">
+              <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
                 Destination (Nigeria or International)
               </span>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-sm font-bold text-slate-800 mb-1.5">
                   Delivery Address *
                 </label>
                 <input
@@ -255,17 +255,17 @@ export default function CreateDelivery() {
                   value={formData.delivery_address}
                   onChange={handleChange}
                   placeholder="e.g. 5 Isaac John Street, GRA Ikeja, Lagos OR London, UK"
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896]"
+                  className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#003896] font-medium transition-all"
                 />
                 {/* Destination quick presets */}
-                <div className="flex flex-wrap gap-1 mt-2">
-                  <span className="text-[10px] text-slate-400 font-medium">Quick pick:</span>
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                  <span className="text-xs text-slate-400 font-medium">Quick pick:</span>
                   {DESTINATION_PRESETS.slice(0, 3).map((p) => (
                     <button
                       key={p}
                       type="button"
                       onClick={() => handleApplyPreset('delivery_address', p)}
-                      className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md hover:bg-emerald-100 font-medium cursor-pointer"
+                      className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg hover:bg-emerald-100 font-medium cursor-pointer transition-colors"
                     >
                       {p.split(',')[0]}
                     </button>
@@ -273,9 +273,9 @@ export default function CreateDelivery() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Recipient Name *</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Recipient Name *</label>
                   <input
                     type="text"
                     name="recipient_name"
@@ -283,11 +283,11 @@ export default function CreateDelivery() {
                     value={formData.recipient_name}
                     onChange={handleChange}
                     placeholder="Recipient name"
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Recipient Phone *</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Recipient Phone *</label>
                   <input
                     type="tel"
                     name="recipient_phone"
@@ -295,7 +295,7 @@ export default function CreateDelivery() {
                     value={formData.recipient_phone}
                     onChange={handleChange}
                     placeholder="080XXXXXXXX"
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium"
                   />
                 </div>
               </div>
@@ -308,7 +308,7 @@ export default function CreateDelivery() {
                   value={formData.delivery_notes}
                   onChange={handleChange}
                   placeholder="Leave with receptionist, call upon arrival"
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm"
                 />
               </div>
             </div>
@@ -491,25 +491,25 @@ export default function CreateDelivery() {
         </div>
 
         {/* Submit Actions */}
-        <div className="flex items-center justify-end gap-3 pt-2">
+        <div className="flex items-center justify-end gap-4 pt-4">
           <button
             type="button"
             onClick={() => navigate('/customer')}
-            className="px-6 py-3 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 cursor-pointer"
+            className="px-8 py-4 rounded-2xl border border-slate-300 text-slate-700 font-bold text-sm sm:text-base hover:bg-slate-50 cursor-pointer transition-all"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 rounded-xl bg-[#003896] hover:bg-[#002c77] text-white font-black text-xs shadow-md shadow-blue-900/20 transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+            className="px-10 py-4 rounded-2xl bg-[#003896] hover:bg-[#002c77] text-white font-bold text-sm sm:text-base shadow-md shadow-blue-900/20 transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2.5"
           >
             {loading ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
                 <span>Confirm & Book Delivery</span>
-                <ArrowRight className="w-4 h-4 text-[#FFC50F]" />
+                <ArrowRight className="w-5 h-5 text-[#FFC50F]" />
               </>
             )}
           </button>

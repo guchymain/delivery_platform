@@ -87,24 +87,24 @@ export default function TrackDelivery() {
   const statusLogs = delivery?.statusLogs || delivery?.status_logs || [];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
       {/* Top Header */}
-      <div className="text-center max-w-xl mx-auto mb-8">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#003896] text-xs font-bold uppercase tracking-wider mb-3 border border-blue-100">
-          <Sparkles className="w-3.5 h-3.5 text-[#FFC50F]" />
-          Lagos Intra-City Tracking
+      <div className="text-center max-w-2xl mx-auto mb-12">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-[#003896] text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 border border-blue-100">
+          <Sparkles className="w-4 h-4 text-[#FFC50F]" />
+          Nationwide & Global Express Tracking
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+        <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
           Track Your Delivery
         </h1>
-        <p className="mt-2 text-xs sm:text-sm text-slate-600">
+        <p className="mt-3 text-base sm:text-lg text-slate-600 leading-relaxed">
           Enter your unique tracking code below for live milestone tracking across Nigeria and worldwide.
         </p>
 
         {/* Tracking Input Bar */}
-        <form onSubmit={handleSubmit} className="mt-6 flex gap-2">
+        <form onSubmit={handleSubmit} className="mt-8 flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
               <Search className="w-5 h-5 text-[#003896]" />
             </div>
             <input
@@ -112,23 +112,23 @@ export default function TrackDelivery() {
               value={inputCode}
               onChange={(e) => setInputCode(e.target.value)}
               placeholder="e.g. DEL-DEMO-001"
-              className="w-full pl-11 pr-4 py-3 bg-white border border-slate-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#003896] font-mono text-sm tracking-wide uppercase"
+              className="w-full pl-12 pr-4 py-4 bg-white border border-slate-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#003896] font-mono text-base tracking-wide uppercase font-semibold"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 bg-[#003896] hover:bg-[#002c77] text-white font-bold text-xs rounded-2xl shadow-md shadow-blue-900/20 transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+            className="px-8 py-4 bg-[#003896] hover:bg-[#002c77] text-white font-bold text-sm sm:text-base rounded-2xl shadow-md shadow-blue-900/20 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shrink-0"
           >
             {loading ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              'Track'
+              'Track Shipment'
             )}
           </button>
         </form>
 
-        <div className="flex items-center justify-center gap-2 mt-3 text-xs text-slate-500">
+        <div className="flex items-center justify-center gap-2 mt-3 text-xs sm:text-sm text-slate-500">
           <span>Demo codes:</span>
           <button
             type="button"
@@ -136,7 +136,7 @@ export default function TrackDelivery() {
               setInputCode('DEL-DEMO-001');
               fetchTracking('DEL-DEMO-001');
             }}
-            className="text-[#003896] font-mono font-bold hover:underline"
+            className="text-[#003896] font-mono font-bold hover:underline cursor-pointer"
           >
             DEL-DEMO-001
           </button>
@@ -147,7 +147,7 @@ export default function TrackDelivery() {
               setInputCode('DEL-DEMO-002');
               fetchTracking('DEL-DEMO-002');
             }}
-            className="text-[#003896] font-mono font-bold hover:underline"
+            className="text-[#003896] font-mono font-bold hover:underline cursor-pointer"
           >
             DEL-DEMO-002
           </button>
@@ -156,18 +156,18 @@ export default function TrackDelivery() {
 
       {/* Loading Skeleton */}
       {loading && (
-        <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm flex flex-col items-center justify-center py-16">
-          <div className="w-10 h-10 border-4 border-[#003896] border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-slate-600 font-semibold text-sm">Querying Lagos delivery records...</p>
+        <div className="bg-white rounded-3xl border border-slate-200 p-12 shadow-sm flex flex-col items-center justify-center py-20">
+          <div className="w-12 h-12 border-4 border-[#003896] border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-slate-700 font-bold text-base">Querying SwiftShip delivery records...</p>
         </div>
       )}
 
       {/* No Result */}
       {!loading && searched && !delivery && (
-        <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm max-w-lg mx-auto">
-          <AlertCircle className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-slate-800">No Delivery Found</h3>
-          <p className="text-xs text-slate-500 mt-1">
+        <div className="bg-white rounded-3xl border border-slate-200 p-14 text-center shadow-sm max-w-xl mx-auto">
+          <AlertCircle className="w-14 h-14 text-slate-400 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-slate-900">No Delivery Found</h3>
+          <p className="text-sm text-slate-600 mt-2 leading-relaxed">
             We couldn't locate any shipment associated with "{inputCode}". Please confirm the tracking code or contact support.
           </p>
         </div>
@@ -214,32 +214,32 @@ export default function TrackDelivery() {
           </div>
 
           {/* Route & Details Grid */}
-          <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="p-8 sm:p-10 grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Pickup & Delivery */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wider">
-                <MapPin className="w-4 h-4 text-[#003896]" /> Lagos Delivery Route
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wider">
+                <MapPin className="w-5 h-5 text-[#003896]" /> Delivery Transit Route
               </h3>
 
-              <div className="relative pl-6 border-l-2 border-blue-200 space-y-6">
+              <div className="relative pl-7 border-l-2 border-blue-200 space-y-7">
                 <div>
-                  <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-[#003896] border-2 border-white shadow" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <div className="absolute -left-2.5 top-0 w-5 h-5 rounded-full bg-[#003896] border-2 border-white shadow" />
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Pickup Location
                   </span>
-                  <div className="font-bold text-slate-900 text-sm mt-0.5">{pickupAddr}</div>
-                  <div className="text-xs text-slate-500 mt-0.5">
+                  <div className="font-bold text-slate-900 text-base mt-1">{pickupAddr}</div>
+                  <div className="text-sm text-slate-500 mt-0.5">
                     Contact: {pickupName} {pickupPhone && `(${pickupPhone})`}
                   </div>
                 </div>
 
                 <div>
-                  <div className="absolute -left-2 top-20 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white shadow" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <div className="absolute -left-2.5 top-24 w-5 h-5 rounded-full bg-emerald-600 border-2 border-white shadow" />
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Drop-off Destination
                   </span>
-                  <div className="font-bold text-slate-900 text-sm mt-0.5">{dropoffAddr}</div>
-                  <div className="text-xs text-slate-500 mt-0.5">
+                  <div className="font-bold text-slate-900 text-base mt-1">{dropoffAddr}</div>
+                  <div className="text-sm text-slate-500 mt-0.5">
                     Recipient: {recipientName} {recipientPhone && `(${recipientPhone})`}
                   </div>
                 </div>
@@ -248,28 +248,28 @@ export default function TrackDelivery() {
 
             {/* Package & Courier Card */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wider">
-                <Package className="w-4 h-4 text-[#003896]" /> Package & Dispatch Status
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wider">
+                <Package className="w-5 h-5 text-[#003896]" /> Package & Dispatch Status
               </h3>
 
-              <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/80 space-y-2.5 text-xs">
-                <div className="flex justify-between">
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/80 space-y-3.5 text-sm">
+                <div className="flex justify-between items-center">
                   <span className="text-slate-500">Package Description:</span>
                   <span className="font-semibold text-slate-800">{packageDesc}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-slate-500">Weight:</span>
                   <span className="font-semibold text-slate-800">{packageWeight} kg</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Delivery Fee:</span>
-                  <span className="font-black text-[#003896]">{formatCurrency(deliveryFee)}</span>
-                </div>
                 <div className="flex justify-between items-center">
+                  <span className="text-slate-500">Delivery Fee:</span>
+                  <span className="font-black text-lg text-[#003896]">{formatCurrency(deliveryFee)}</span>
+                </div>
+                <div className="flex justify-between items-center pt-1 border-t border-slate-200/60">
                   <span className="text-slate-500">Payment Status:</span>
                   <StatusBadge status={paymentStatus} type="payment" size="sm" />
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-slate-500">Payment Mode:</span>
                   <span className="font-semibold text-slate-800">{paymentMethod}</span>
                 </div>

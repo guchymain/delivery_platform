@@ -75,16 +75,16 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#F8FAFC]">
-      <div className="max-w-xl w-full space-y-7 bg-white p-8 sm:p-10 rounded-3xl shadow-xl shadow-blue-900/5 border border-slate-200">
+    <div className="flex-1 flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 bg-slate-50/60">
+      <div className="max-w-2xl w-full space-y-8 bg-white p-8 sm:p-12 rounded-3xl shadow-xl shadow-blue-900/5 border border-slate-200">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#003896] text-white mb-3 shadow-md shadow-blue-900/20">
-            <Package className="w-7 h-7 text-[#FFC50F]" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#003896] text-white mb-4 shadow-lg shadow-blue-900/20">
+            <Package className="w-8 h-8 text-[#FFC50F]" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
             Join SwiftShip
           </h2>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+          <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed max-w-lg mx-auto">
             Create an account to book nationwide Nigerian and global shipments or earn as a verified courier
           </p>
         </div>
@@ -94,9 +94,9 @@ export default function Register() {
           <button
             type="button"
             onClick={() => setRole('CUSTOMER')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+            className={`flex-1 flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-bold text-sm transition-all cursor-pointer ${
               role === 'CUSTOMER'
-                ? 'bg-white text-[#003896] shadow-xs'
+                ? 'bg-white text-[#003896] shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -106,9 +106,9 @@ export default function Register() {
           <button
             type="button"
             onClick={() => setRole('RIDER')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+            className={`flex-1 flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-bold text-sm transition-all cursor-pointer ${
               role === 'RIDER'
-                ? 'bg-white text-amber-700 shadow-xs'
+                ? 'bg-white text-amber-700 shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -117,10 +117,10 @@ export default function Register() {
           </button>
         </div>
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
                 First Name
               </label>
               <input
@@ -130,11 +130,11 @@ export default function Register() {
                 value={formData.first_name}
                 onChange={handleChange}
                 placeholder="Jane"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium"
+                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-slate-900 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
                 Last Name
               </label>
               <input
@@ -144,19 +144,19 @@ export default function Register() {
                 value={formData.last_name}
                 onChange={handleChange}
                 placeholder="Doe"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium"
+                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-slate-900 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium transition-all"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <Mail className="h-4 w-4 text-[#003896]" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                  <Mail className="h-5 w-5 text-[#003896]" />
                 </div>
                 <input
                   type="email"
@@ -165,17 +165,17 @@ export default function Register() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="jane@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium"
+                  className="w-full pl-12 pr-4 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-slate-900 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium transition-all"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
                 Phone Number
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <Phone className="h-4 w-4 text-[#003896]" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                  <Phone className="h-5 w-5 text-[#003896]" />
                 </div>
                 <input
                   type="tel"
@@ -184,7 +184,7 @@ export default function Register() {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="080XXXXXXXX"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium"
+                  className="w-full pl-12 pr-4 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-slate-900 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium transition-all"
                 />
               </div>
             </div>
@@ -192,18 +192,18 @@ export default function Register() {
 
           {/* Rider Specific Fields */}
           {role === 'RIDER' && (
-            <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-3">
-              <div className="text-[11px] font-bold text-amber-900 uppercase tracking-wide flex items-center gap-1.5">
-                <Bike className="w-4 h-4 text-amber-600" /> Courier Vehicle Details
+            <div className="p-5 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-4">
+              <div className="text-xs font-bold text-amber-900 uppercase tracking-wide flex items-center gap-2">
+                <Bike className="w-5 h-5 text-amber-600" /> Courier Vehicle Details
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Vehicle Type</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Vehicle Type</label>
                   <select
                     name="vehicle_type"
                     value={formData.vehicle_type}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
                   >
                     <option value="MOTORCYCLE">Motorcycle</option>
                     <option value="BICYCLE">Bicycle</option>
@@ -212,7 +212,7 @@ export default function Register() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Plate Number</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Plate Number</label>
                   <input
                     type="text"
                     name="vehicle_number"
@@ -220,11 +220,11 @@ export default function Register() {
                     value={formData.vehicle_number}
                     onChange={handleChange}
                     placeholder="LND-123-XY"
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">License No.</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">License No.</label>
                   <input
                     type="text"
                     name="license_number"
@@ -232,7 +232,7 @@ export default function Register() {
                     value={formData.license_number}
                     onChange={handleChange}
                     placeholder="DL-987654"
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
                   />
                 </div>
               </div>
@@ -241,12 +241,12 @@ export default function Register() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
                 Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <Lock className="h-4 w-4 text-[#003896]" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                  <Lock className="h-5 w-5 text-[#003896]" />
                 </div>
                 <input
                   type="password"
@@ -254,18 +254,18 @@ export default function Register() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Min. 8 chars"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium"
+                  placeholder="Min. 8 characters"
+                  className="w-full pl-12 pr-4 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-slate-900 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium transition-all"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
                 Confirm Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <ShieldCheck className="h-4 w-4 text-[#003896]" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                  <ShieldCheck className="h-5 w-5 text-[#003896]" />
                 </div>
                 <input
                   type="password"
@@ -274,7 +274,7 @@ export default function Register() {
                   value={formData.confirm_password}
                   onChange={handleChange}
                   placeholder="Repeat password"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium"
+                  className="w-full pl-12 pr-4 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-slate-900 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#003896] focus:bg-white font-medium transition-all"
                 />
               </div>
             </div>
@@ -283,21 +283,21 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 mt-6 rounded-xl shadow-md text-xs font-bold text-white bg-[#003896] hover:bg-[#002c77] focus:outline-none focus:ring-2 focus:ring-[#003896] transition-all disabled:opacity-50 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-4 px-6 mt-6 rounded-2xl shadow-md text-base font-bold text-white bg-[#003896] hover:bg-[#002c77] focus:outline-none focus:ring-2 focus:ring-[#003896] transition-all disabled:opacity-50 cursor-pointer"
           >
             {loading ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
                 <span>Register as {role === 'CUSTOMER' ? 'Customer' : 'Rider'}</span>
-                <ArrowRight className="w-4 h-4 text-[#FFC50F]" />
+                <ArrowRight className="w-5 h-5 text-[#FFC50F]" />
               </>
             )}
           </button>
         </form>
 
-        <div className="pt-2 text-center border-t border-slate-100">
-          <p className="text-xs text-slate-600">
+        <div className="pt-4 text-center border-t border-slate-100">
+          <p className="text-sm text-slate-600">
             Already have an account?{' '}
             <Link to="/login" className="font-bold text-[#003896] hover:underline">
               Sign in
