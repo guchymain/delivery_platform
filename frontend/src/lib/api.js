@@ -11,7 +11,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
-  timeout: 20000
+  timeout: 60000
 });
 
 // Attach JWT token from localStorage to all outgoing requests
@@ -57,12 +57,21 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    const message =
+    let message =
       error.response?.data?.message ||
       (error.response?.data?.errors &&
         error.response.data.errors.map((e) => e.message || e).join(', ')) ||
       error.message ||
       'An unexpected error occurred';
+
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      message = 'Server request timed out. The cloud server may be waking up from sleep; please try again.';
+    } else if (error.message === 'Network Error') {
+      message = 'Network connection error. Please ensure the backend is active and CORS is permitted.';
+    }
+
+    // Attach user-friendly formatted message to error object
+    error.displayMessage = message;
 
     if (error.response?.status === 401) {
       const isAuthUrl =

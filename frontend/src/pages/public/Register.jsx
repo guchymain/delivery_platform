@@ -67,7 +67,7 @@ export default function Register() {
       toast.success('Registration successful! Please sign in with your credentials.');
       navigate('/login');
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Registration failed';
+      const msg = err.displayMessage || err.response?.data?.message || err.message || 'Registration failed';
       toast.error(msg);
     } finally {
       setLoading(false);

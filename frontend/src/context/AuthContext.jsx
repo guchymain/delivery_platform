@@ -58,32 +58,24 @@ export const AuthProvider = ({ children }) => {
         ? { email: emailOrObj, password: maybePassword }
         : emailOrObj;
       const data = await authAPI.login(payload);
-      localStorage.setItem('delivery_token', data.token)
-      localStorage.setItem('delivery_user', JSON.stringify(data.user))
-      setUser(data.user)
-      setToken(data.token)
-      toast.success(data.message || 'Logged in successfully')
-      return data.user
+      localStorage.setItem('delivery_token', data.token);
+      localStorage.setItem('delivery_user', JSON.stringify(data.user));
+      setUser(data.user);
+      setToken(data.token);
+      return data.user;
     } catch (err) {
-      toast.error(err.message || 'Failed to log in')
-      throw err
+      throw err;
     }
-  }
+  };
 
   const register = async (payload) => {
     try {
-      const data = await authAPI.register(payload)
-      localStorage.setItem('delivery_token', data.token)
-      localStorage.setItem('delivery_user', JSON.stringify(data.user))
-      setUser(data.user)
-      setToken(data.token)
-      toast.success(data.message || 'Registered successfully')
-      return data.user
+      const data = await authAPI.register(payload);
+      return data.user;
     } catch (err) {
-      toast.error(err.message || 'Registration failed')
-      throw err
+      throw err;
     }
-  }
+  };
 
   const logout = () => {
     localStorage.removeItem('delivery_token')

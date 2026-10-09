@@ -36,7 +36,7 @@ export default function Login() {
       else if (user.role === 'RIDER') navigate('/rider');
       else navigate('/customer');
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Login failed';
+      const msg = err.displayMessage || err.response?.data?.message || err.message || 'Login failed';
       toast.error(msg);
     } finally {
       setLoading(false);
