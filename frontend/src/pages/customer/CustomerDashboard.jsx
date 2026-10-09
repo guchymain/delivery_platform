@@ -57,7 +57,7 @@ export default function CustomerDashboard() {
     .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
       {/* SwiftShip Welcome Banner */}
       <div className="bg-[#003896] rounded-3xl p-7 sm:p-8 text-white shadow-xl shadow-blue-900/10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative overflow-hidden">
         <div className="space-y-1 relative z-10">
@@ -234,7 +234,7 @@ export default function CustomerDashboard() {
                 <th className="px-5 py-3">Delivery Fee</th>
                 <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3">Payment</th>
-                <th className="px-5 py-3 text-right">Action</th>
+                <th className="px-5 py-3 text-right whitespace-nowrap">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
@@ -266,7 +266,7 @@ export default function CustomerDashboard() {
                       <td className="px-5 py-3">
                         <StatusBadge status={payStatus} type="payment" size="sm" />
                       </td>
-                      <td className="px-5 py-3 text-right">
+                      <td className="px-5 py-3 text-right whitespace-nowrap">
                         <Link
                           to={`/customer/deliveries/${d.id}`}
                           className="font-bold text-[#003896] hover:underline"

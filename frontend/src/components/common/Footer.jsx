@@ -5,7 +5,7 @@ import { Package, Globe, ShieldCheck, Mail, MapPin, ArrowRight } from 'lucide-re
 export default function Footer() {
   return (
     <footer className="bg-[#0A1128] text-white border-t border-slate-800 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
           {/* Brand & Purpose */}
           <div className="lg:col-span-2 space-y-4">
@@ -21,9 +21,9 @@ export default function Footer() {
               Nigeria-based nationwide logistics and express air courier connecting commercial hubs across all 36 states to over 200 destinations worldwide.
             </p>
             <div className="flex items-center gap-3 pt-2 text-xs text-slate-400">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold whitespace-nowrap">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                order bike: They move like they have nothing to loose
+                Live Fleet Dispatched: Intra-city couriers & nationwide freight active
               </span>
             </div>
           </div>

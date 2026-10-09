@@ -76,7 +76,7 @@ export default function RiderDashboard() {
     profile?.availabilityStatus || profile?.availability_status || 'AVAILABLE';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
       {/* SwiftShip Courier Header Banner */}
       <div className="bg-[#003896] rounded-3xl p-7 sm:p-8 text-white shadow-xl shadow-blue-900/10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative overflow-hidden">
         <div className="space-y-1 relative z-10">

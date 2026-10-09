@@ -121,7 +121,7 @@ export default function DeliveryDetail() {
   const needsPayment = !isPaid && delivery.status !== 'CANCELLED';
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 font-sans">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 font-sans">
       {/* Top Back Nav & Quick Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <Link
@@ -199,8 +199,8 @@ export default function DeliveryDetail() {
             </h3>
 
             <div className="relative pl-6 border-l-2 border-blue-200 space-y-6 text-xs">
-              <div>
-                <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-[#003896] border-2 border-white shadow" />
+              <div className="relative">
+                <div className="absolute -left-[33px] top-0.5 w-4 h-4 rounded-full bg-[#003896] border-2 border-white shadow" />
                 <span className="text-[10px] font-bold text-slate-400 uppercase">Pickup Location</span>
                 <p className="font-bold text-slate-900 text-sm mt-0.5">{pickupAddr}</p>
                 <p className="text-slate-500 mt-0.5">Contact: {pickupName} {pickupPhone && `(${pickupPhone})`}</p>
@@ -211,8 +211,8 @@ export default function DeliveryDetail() {
                 )}
               </div>
 
-              <div>
-                <div className="absolute -left-2 top-20 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white shadow" />
+              <div className="relative">
+                <div className="absolute -left-[33px] top-0.5 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white shadow" />
                 <span className="text-[10px] font-bold text-slate-400 uppercase">Dropoff Destination</span>
                 <p className="font-bold text-slate-900 text-sm mt-0.5">{dropAddr}</p>
                 <p className="text-slate-500 mt-0.5">Recipient: {recipientName} {recipientPhone && `(${recipientPhone})`}</p>

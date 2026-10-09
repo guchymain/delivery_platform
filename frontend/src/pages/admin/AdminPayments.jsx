@@ -76,7 +76,7 @@ export default function AdminPayments() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/15 text-brand-dark text-xs font-bold mb-2">
@@ -143,7 +143,7 @@ export default function AdminPayments() {
                 <th className="px-5 py-4">Method</th>
                 <th className="px-5 py-4">Status</th>
                 <th className="px-5 py-4">Timestamp</th>
-                <th className="px-5 py-4 text-right">Actions</th>
+                <th className="px-5 py-4 text-right whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
@@ -193,11 +193,11 @@ export default function AdminPayments() {
                       <td className="px-5 py-4 text-xs text-slate-400 whitespace-nowrap font-medium">
                         {formatDate(p.createdAt)}
                       </td>
-                      <td className="px-5 py-4 text-right">
+                      <td className="px-5 py-4 text-right whitespace-nowrap">
                         {canRefund && (
                           <button
                             onClick={() => handleOpenRefund(p)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-brand-blue/30 text-brand-blue hover:bg-brand-blue hover:text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-brand-blue/30 text-brand-blue hover:bg-brand-blue hover:text-white text-xs font-bold transition-all cursor-pointer shadow-xs whitespace-nowrap"
                           >
                             <RotateCcw className="w-3.5 h-3.5" /> Refund
                           </button>

@@ -87,7 +87,7 @@ export default function TrackDelivery() {
   const statusLogs = delivery?.statusLogs || delivery?.status_logs || [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
       {/* Top Header */}
       <div className="text-center max-w-2xl mx-auto mb-12">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-[#003896] text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 border border-blue-100">
@@ -118,7 +118,7 @@ export default function TrackDelivery() {
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-4 bg-[#003896] hover:bg-[#002c77] text-white font-bold text-sm sm:text-base rounded-2xl shadow-md shadow-blue-900/20 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shrink-0"
+            className="px-8 py-4 bg-[#003896] hover:bg-[#002c77] text-white font-bold text-sm sm:text-base rounded-2xl shadow-md shadow-blue-900/20 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -191,14 +191,14 @@ export default function TrackDelivery() {
                   {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
-              <div className="text-2xl sm:text-3xl font-mono font-black tracking-wide mt-0.5">
+              <div className="text-2xl sm:text-3xl font-mono font-black tracking-wide mt-0.5 break-all sm:break-normal">
                 {trackingCodeDisplay}
               </div>
               <p className="text-xs text-blue-100 mt-1">
                 Booked on {formatDate(delivery.createdAt)}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <StatusBadge status={delivery.status} type="delivery" size="lg" />
               <StatusBadge status={paymentStatus} type="payment" size="lg" />
             </div>
@@ -222,8 +222,8 @@ export default function TrackDelivery() {
               </h3>
 
               <div className="relative pl-7 border-l-2 border-blue-200 space-y-7">
-                <div>
-                  <div className="absolute -left-2.5 top-0 w-5 h-5 rounded-full bg-[#003896] border-2 border-white shadow" />
+                <div className="relative">
+                  <div className="absolute -left-[39px] top-1 w-5 h-5 rounded-full bg-[#003896] border-2 border-white shadow" />
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Pickup Location
                   </span>
@@ -233,8 +233,8 @@ export default function TrackDelivery() {
                   </div>
                 </div>
 
-                <div>
-                  <div className="absolute -left-2.5 top-24 w-5 h-5 rounded-full bg-emerald-600 border-2 border-white shadow" />
+                <div className="relative">
+                  <div className="absolute -left-[39px] top-1 w-5 h-5 rounded-full bg-emerald-600 border-2 border-white shadow" />
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Drop-off Destination
                   </span>

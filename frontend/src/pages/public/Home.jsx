@@ -107,7 +107,7 @@ export const Home = () => {
         {/* Decorative background glow */}
         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-tr from-[#003896]/5 via-[#FFC50F]/10 to-transparent blur-3xl rounded-full -z-10 pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Column: Headlines & Positioning */}
             <div className="lg:col-span-7 space-y-6 text-left">
@@ -148,20 +148,20 @@ export const Home = () => {
                   onSubmit={handleTrack}
                   className="flex flex-col sm:flex-row items-center gap-2 p-2 bg-white rounded-2xl shadow-xl shadow-blue-900/5 border border-slate-200"
                 >
-                  <div className="flex items-center gap-3 w-full px-3 py-2">
+                  <div className="flex items-center gap-3 w-full px-3 py-2 min-w-0">
                     <Search className="w-5 h-5 text-[#003896] shrink-0" />
                     <input
                       type="text"
                       value={trackingCode}
                       onChange={(e) => setTrackingCode(e.target.value)}
                       placeholder="Enter Tracking ID (e.g., DEL-DEMO-001)"
-                      className="w-full text-sm sm:text-base text-slate-900 placeholder-slate-400 bg-transparent focus:outline-none font-medium"
+                      className="w-full text-sm sm:text-base text-slate-900 placeholder-slate-400 bg-transparent focus:outline-none font-medium min-w-0"
                       required
                     />
                   </div>
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-7 py-3.5 bg-[#003896] hover:bg-[#002c77] text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-900/20 shrink-0 cursor-pointer"
+                    className="w-full sm:w-auto px-7 py-3.5 bg-[#003896] hover:bg-[#002c77] text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-900/20 shrink-0 cursor-pointer whitespace-nowrap"
                   >
                     <span>Track</span>
                     <ArrowRight className="w-4 h-4 text-[#FFC50F]" />
@@ -172,11 +172,11 @@ export const Home = () => {
 
             {/* Right Column: Multi-Scope Interactive Shipping Rate & Transit Calculator */}
             <div className="lg:col-span-5">
-              <div className="bg-white rounded-3xl p-7 sm:p-9 shadow-xl shadow-blue-900/10 border border-blue-100/80 relative">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-9 shadow-xl shadow-blue-900/10 border border-blue-100/80 relative">
                 {/* Header */}
                 <div className="flex items-center justify-between pb-5 border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#003896] text-white flex items-center justify-center shadow-xs">
+                    <div className="w-10 h-10 rounded-xl bg-[#003896] text-white flex items-center justify-center shadow-xs shrink-0">
                       <Calculator className="w-5 h-5 text-[#FFC50F]" />
                     </div>
                     <div>
@@ -188,17 +188,17 @@ export const Home = () => {
                       </p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
                     Live Rates
                   </span>
                 </div>
 
                 {/* Service Mode Tabs (Domestic / International / Shop & Ship) */}
-                <div className="grid grid-cols-3 gap-2 bg-slate-100 p-1.5 rounded-2xl mt-5">
+                <div className="grid grid-cols-3 gap-1.5 sm:gap-2 bg-slate-100 p-1.5 rounded-2xl mt-5">
                   <button
                     type="button"
                     onClick={() => handleModeSwitch('DOMESTIC')}
-                    className={`py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${
+                    className={`py-2 sm:py-2.5 px-1 text-xs md:text-sm font-bold rounded-xl transition-all cursor-pointer truncate ${
                       shippingMode === 'DOMESTIC'
                         ? 'bg-white text-[#003896] shadow-xs'
                         : 'text-slate-600 hover:text-slate-900'
@@ -209,7 +209,7 @@ export const Home = () => {
                   <button
                     type="button"
                     onClick={() => handleModeSwitch('INTERNATIONAL')}
-                    className={`py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${
+                    className={`py-2 sm:py-2.5 px-1 text-xs md:text-sm font-bold rounded-xl transition-all cursor-pointer truncate ${
                       shippingMode === 'INTERNATIONAL'
                         ? 'bg-white text-[#003896] shadow-xs'
                         : 'text-slate-600 hover:text-slate-900'
@@ -220,7 +220,7 @@ export const Home = () => {
                   <button
                     type="button"
                     onClick={() => handleModeSwitch('SHOP_N_SHIP')}
-                    className={`py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${
+                    className={`py-2 sm:py-2.5 px-1 text-xs md:text-sm font-bold rounded-xl transition-all cursor-pointer truncate ${
                       shippingMode === 'SHOP_N_SHIP'
                         ? 'bg-white text-[#003896] shadow-xs'
                         : 'text-slate-600 hover:text-slate-900'
@@ -349,16 +349,16 @@ export const Home = () => {
                     <button
                       type="button"
                       onClick={() => setSelectedSpeed('EXPRESS')}
-                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                      className={`p-3 sm:p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                         selectedSpeed === 'EXPRESS'
                           ? 'border-[#003896] bg-blue-50/50 text-[#003896]'
                           : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
                       }`}
                     >
-                      <p className="text-xs sm:text-sm font-bold flex items-center justify-between">
-                        Express Dispatch
+                      <p className="text-xs sm:text-sm font-bold flex items-center justify-between gap-1">
+                        <span className="truncate">Express Dispatch</span>
                         {selectedSpeed === 'EXPRESS' && (
-                          <Check className="w-4 h-4 text-[#003896]" />
+                          <Check className="w-4 h-4 text-[#003896] shrink-0" />
                         )}
                       </p>
                       <p className="text-xs text-slate-500 mt-1">
@@ -369,16 +369,16 @@ export const Home = () => {
                     <button
                       type="button"
                       onClick={() => setSelectedSpeed('STANDARD')}
-                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                      className={`p-3 sm:p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                         selectedSpeed === 'STANDARD'
                           ? 'border-[#003896] bg-blue-50/50 text-[#003896]'
                           : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
                       }`}
                     >
-                      <p className="text-xs sm:text-sm font-bold flex items-center justify-between">
-                        Economy Freight
+                      <p className="text-xs sm:text-sm font-bold flex items-center justify-between gap-1">
+                        <span className="truncate">Economy Freight</span>
                         {selectedSpeed === 'STANDARD' && (
-                          <Check className="w-4 h-4 text-[#003896]" />
+                          <Check className="w-4 h-4 text-[#003896] shrink-0" />
                         )}
                       </p>
                       <p className="text-xs text-slate-500 mt-1">
@@ -389,7 +389,7 @@ export const Home = () => {
 
                   {/* Calculated Price Display */}
                   <div className="p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200/80">
-                    <div className="flex items-baseline justify-between mb-1.5">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1.5">
                       <span className="text-xs sm:text-sm text-slate-600 font-semibold">Estimated Delivery Fee:</span>
                       <div className="text-right">
                         <span className="text-2xl sm:text-3xl font-black text-[#003896]">
@@ -400,7 +400,7 @@ export const Home = () => {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-200/60">
+                    <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs text-slate-500 pt-2 border-t border-slate-200/60">
                       <span>Transparent: $5.00 base + $1.50/kg</span>
                       <span className="text-emerald-700 font-semibold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> No hidden fees
@@ -411,7 +411,7 @@ export const Home = () => {
                   {/* CTA Book Button */}
                   <button
                     onClick={handleBookWithEstimate}
-                    className="w-full py-4 bg-[#003896] hover:bg-[#002c77] text-white text-sm sm:text-base font-bold rounded-2xl shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    className="w-full py-4 px-6 bg-[#003896] hover:bg-[#002c77] text-white text-sm sm:text-base font-bold rounded-2xl shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap"
                   >
                     <span>Book Shipment with This Rate</span>
                     <ArrowRight className="w-4 h-4 text-[#FFC50F]" />
@@ -425,8 +425,8 @@ export const Home = () => {
 
       {/* Trust & Key Metrics Strip */}
       <section className="bg-white border-b border-slate-200/80 py-10 sm:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
             <div className="p-2">
               <p className="text-3xl sm:text-4xl font-black text-[#003896]">200+</p>
               <p className="text-sm font-medium text-slate-600 mt-1.5">Global Cities & Countries</p>
@@ -448,7 +448,7 @@ export const Home = () => {
       </section>
 
       {/* Core Service Pillars */}
-      <section className="py-20 md:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <section className="py-20 md:py-28 max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#003896] bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
             Logistics Infrastructure Built for Africa & Beyond
@@ -461,8 +461,8 @@ export const Home = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-all min-h-[300px] flex flex-col justify-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-all min-h-[300px] flex flex-col justify-start">
             <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#003896] flex items-center justify-center mb-6">
               <Truck className="w-7 h-7 text-[#003896]" />
             </div>
@@ -472,7 +472,7 @@ export const Home = () => {
             </p>
           </div>
 
-          <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-all min-h-[300px] flex flex-col justify-start">
+          <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-all min-h-[300px] flex flex-col justify-start">
             <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6">
               <Globe className="w-7 h-7 text-[#FFC50F]" />
             </div>
@@ -482,7 +482,7 @@ export const Home = () => {
             </p>
           </div>
 
-          <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-all min-h-[300px] flex flex-col justify-start">
+          <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-all min-h-[300px] flex flex-col justify-start">
             <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6">
               <ShieldCheck className="w-7 h-7 text-emerald-600" />
             </div>
@@ -496,7 +496,7 @@ export const Home = () => {
 
       {/* How SwiftShip Works (3 Steps) */}
       <section className="bg-white py-20 md:py-28 border-y border-slate-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
               Simple 3-Step Process
@@ -506,8 +506,8 @@ export const Home = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            <div className="text-center p-8 bg-slate-50/70 rounded-3xl border border-slate-200/60 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 relative">
+            <div className="text-center p-6 sm:p-8 bg-slate-50/70 rounded-3xl border border-slate-200/60 space-y-4">
               <div className="w-16 h-16 mx-auto rounded-2xl bg-[#003896] text-white flex items-center justify-center text-xl font-black shadow-md shadow-blue-900/20">
                 1
               </div>
@@ -517,7 +517,7 @@ export const Home = () => {
               </p>
             </div>
 
-            <div className="text-center p-8 bg-slate-50/70 rounded-3xl border border-slate-200/60 space-y-4">
+            <div className="text-center p-6 sm:p-8 bg-slate-50/70 rounded-3xl border border-slate-200/60 space-y-4">
               <div className="w-16 h-16 mx-auto rounded-2xl bg-[#FFC50F] text-slate-900 flex items-center justify-center text-xl font-black shadow-md">
                 2
               </div>
@@ -527,7 +527,7 @@ export const Home = () => {
               </p>
             </div>
 
-            <div className="text-center p-8 bg-slate-50/70 rounded-3xl border border-slate-200/60 space-y-4">
+            <div className="text-center p-6 sm:p-8 bg-slate-50/70 rounded-3xl border border-slate-200/60 space-y-4">
               <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl font-black shadow-md">
                 3
               </div>
@@ -541,8 +541,8 @@ export const Home = () => {
       </section>
 
       {/* Coverage & Global Gateway Strip */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="bg-[#003896] rounded-3xl p-10 sm:p-16 text-white relative overflow-hidden shadow-2xl shadow-blue-950/20">
+      <section className="py-20 max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="bg-[#003896] rounded-3xl p-8 sm:p-12 md:p-16 text-white relative overflow-hidden shadow-2xl shadow-blue-950/20">
           <div className="relative z-10 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-[#FFC50F] text-xs sm:text-sm font-bold mb-4">
               <MapPin className="w-4 h-4" /> Nationwide & Global Gateways
@@ -568,13 +568,13 @@ export const Home = () => {
             <div className="mt-10 pt-8 border-t border-white/15 flex flex-wrap items-center gap-4">
               <Link
                 to="/register"
-                className="px-8 py-4 rounded-full bg-[#FFC50F] hover:bg-[#e5b00b] text-slate-900 font-bold text-sm sm:text-base shadow-lg transition-all cursor-pointer"
+                className="w-full sm:w-auto text-center justify-center px-8 py-4 rounded-full bg-[#FFC50F] hover:bg-[#e5b00b] text-slate-900 font-bold text-sm sm:text-base shadow-lg transition-all cursor-pointer whitespace-nowrap"
               >
                 Create Free Shipping Account
               </Link>
               <Link
                 to="/track"
-                className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base border border-white/20 transition-all cursor-pointer"
+                className="w-full sm:w-auto text-center justify-center px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base border border-white/20 transition-all cursor-pointer whitespace-nowrap"
               >
                 Track Live Shipment
               </Link>
@@ -585,7 +585,7 @@ export const Home = () => {
 
       {/* Role Cockpits Strip: Tall, Spacious, Beautiful Cards */}
       <section className="bg-slate-100/70 py-20 border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-xs sm:text-sm font-bold text-[#003896] uppercase tracking-wider bg-blue-50 px-3.5 py-1 rounded-full border border-blue-100">
               Tailored Portals for Every Stakeholder
@@ -598,9 +598,9 @@ export const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Customer Role Card */}
-            <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 min-h-[480px] sm:min-h-[500px] flex flex-col justify-between">
+            <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 min-h-[480px] sm:min-h-[500px] flex flex-col justify-between">
               <div>
                 <span className="px-3.5 py-1 rounded-full bg-blue-50 text-[#003896] text-xs font-black uppercase tracking-wider border border-blue-100">
                   Customer Portal
@@ -638,7 +638,7 @@ export const Home = () => {
             </div>
 
             {/* Rider Role Card */}
-            <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 min-h-[480px] sm:min-h-[500px] flex flex-col justify-between">
+            <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 min-h-[480px] sm:min-h-[500px] flex flex-col justify-between">
               <div>
                 <span className="px-3.5 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-black uppercase tracking-wider border border-amber-200">
                   Courier Fleet
@@ -676,7 +676,7 @@ export const Home = () => {
             </div>
 
             {/* Admin Role Card */}
-            <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 min-h-[480px] sm:min-h-[500px] flex flex-col justify-between">
+            <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 min-h-[480px] sm:min-h-[500px] flex flex-col justify-between">
               <div>
                 <span className="px-3.5 py-1 rounded-full bg-purple-50 text-purple-800 text-xs font-black uppercase tracking-wider border border-purple-200">
                   Operations Console

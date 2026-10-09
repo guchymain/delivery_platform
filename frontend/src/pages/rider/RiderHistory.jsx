@@ -31,7 +31,7 @@ export default function RiderHistory() {
     .reduce((sum, d) => sum + parseFloat(d.deliveryFee || d.delivery_fee || 0), 0);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/15 text-brand-dark text-xs font-bold mb-2">
           <span>⚡ Lagos Fleet Logs</span>

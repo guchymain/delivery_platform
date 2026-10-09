@@ -87,7 +87,7 @@ export default function CustomerDeliveries() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 font-sans">
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -164,7 +164,7 @@ export default function CustomerDeliveries() {
                 <th className="px-5 py-3.5">Delivery Status</th>
                 <th className="px-5 py-3.5">Payment</th>
                 <th className="px-5 py-3.5">Booked On</th>
-                <th className="px-5 py-3.5 text-right">Actions</th>
+                <th className="px-5 py-3.5 text-right whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">

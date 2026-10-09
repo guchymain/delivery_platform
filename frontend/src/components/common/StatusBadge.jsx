@@ -18,10 +18,10 @@ export const StatusBadge = ({ status, type = 'delivery', size = 'md' }) => {
   const s = String(status).toUpperCase()
 
   const sizeClasses = {
-    sm: 'text-xs px-2 py-0.5 gap-1',
-    md: 'text-xs font-medium px-2.5 py-1 gap-1.5',
-    lg: 'text-sm font-semibold px-3 py-1.5 gap-2'
-  }[size] || 'text-xs px-2.5 py-1 gap-1.5'
+    sm: 'text-xs px-2.5 py-0.5 gap-1 whitespace-nowrap shrink-0 font-medium',
+    md: 'text-xs font-semibold px-2.5 py-1 gap-1.5 whitespace-nowrap shrink-0',
+    lg: 'text-sm font-semibold px-3 py-1.5 gap-2 whitespace-nowrap shrink-0'
+  }[size] || 'text-xs px-2.5 py-1 gap-1.5 whitespace-nowrap shrink-0 font-medium'
 
   // Delivery status configuration
   if (type === 'delivery') {

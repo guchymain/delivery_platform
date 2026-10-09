@@ -9,6 +9,7 @@
   --color-brand-yellow: #ffc50f;
   --color-brand-yellow-hover: #e5b00b;
   --color-brand-dark: #0a1128;
+  --container-8xl: 1400px;
 }
 
 @layer base {

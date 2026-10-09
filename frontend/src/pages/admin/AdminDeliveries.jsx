@@ -83,7 +83,7 @@ export default function AdminDeliveries() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/15 text-brand-dark text-xs font-bold mb-2">
@@ -161,7 +161,7 @@ export default function AdminDeliveries() {
                 <th className="px-5 py-4">Delivery Fee</th>
                 <th className="px-5 py-4">Order Status</th>
                 <th className="px-5 py-4">Payment</th>
-                <th className="px-5 py-4 text-right">Actions</th>
+                <th className="px-5 py-4 text-right whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
@@ -208,7 +208,7 @@ export default function AdminDeliveries() {
                     <td className="px-5 py-4">
                       <StatusBadge status={getPaymentStatus(del)} type="payment" />
                     </td>
-                    <td className="px-5 py-4 text-right">
+                    <td className="px-5 py-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleOpenStatusModal(del)}

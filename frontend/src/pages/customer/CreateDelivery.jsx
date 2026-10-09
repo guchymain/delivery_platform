@@ -138,7 +138,7 @@ export default function CreateDelivery() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-sans">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-sans">
       {/* Page Header */}
       <div className="mb-10">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-[#003896] text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 border border-blue-100">
