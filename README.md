@@ -349,17 +349,17 @@ Delivery_platform/
 
 **Backend (`backend/.env`):**
 ```ini
-PORT=5000
-NODE_ENV=development
-JWT_SECRET=your_super_secret_jwt_key
-DATABASE_URL=postgres://user:password@host:port/database?sslmode=require
-CORS_ORIGIN=http://localhost:3000,http://localhost:5173,https://your-frontend-domain.com,*
+PORT=
+NODE_ENV=
+JWT_SECRET=
+DATABASE_URL=
+CORS_ORIGIN=http:
 ```
 
 **Frontend (`frontend/.env`):**
 ```ini
 # Production Hosted Backend API
-VITE_API_URL=https://your-backend-api.onrender.com/api
+VITE_API_URL=
 ```
 
 ### 3. Install Dependencies
